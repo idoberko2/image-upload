@@ -7,16 +7,13 @@ const multer = require('multer');
 const processImage = require('../utils/processImage');
 const storeLocally = require('../utils/storeLocally');
 
+// multer middleware
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post('/', upload.any(), async function(req, res) {
-  const imagePromises = req.files.map(image => {
-    const processedImage = processImage(image.buffer);
+router.post('/', upload.single('image'), async function(req, res) {
+  const processedImage = processImage(req.file.buffer);
+  await storeLocally(processedImage);
 
-    return storeLocally(processedImage);
-  });
-
-  await Promise.all(imagePromises);
   return res.sendStatus(200);
 });
 

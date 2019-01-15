@@ -1,18 +1,23 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', function() {
     const uploader = document.getElementById('uploader');
     uploader.addEventListener('change', function () {
-        const formData = new FormData();
-
-        Array
+        const promises = Array
             .from(this.files)
-            .forEach(file => {
-                formData.append(file.name, file);
+            .map(file => {
+                const formData = new FormData();
+
+                formData.append('image', file);
+
+                axios.post('/upload', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
             });
-        
-        axios.post('/upload', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+
+        axios
+            .all(promises)
+            .then(() => console.log('mush success!'))
+            .error(err => console.error({err}));
     }, false);
 });
