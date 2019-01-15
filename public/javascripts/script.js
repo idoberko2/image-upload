@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData();
 
                 formData.append('image', file);
+                // TODO: take value from form
+                formData.append('collection', 'katamon vs kfar saba');
 
                 axios.post('/upload', formData, {
                     headers: {
