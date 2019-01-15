@@ -2,7 +2,7 @@ const fs = require('fs');
 
 function storeLocally(imageStream) {
     return new Promise((resolve, reject) => {
-        const fileName = `${__dirname}/../tmp/mush${Math.random()}.jpg`;
+        const fileName = `${__dirname}/../tmpUploads/mush${Math.random()}.jpg`;
         const writeStream = fs.createWriteStream(fileName);
 
         writeStream.on('finish', function () {
