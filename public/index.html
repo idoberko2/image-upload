@@ -9,10 +9,32 @@
 
 <body>
   <div class="button-container">
-      <label for="uploader" class="uploader-wrapper">
-        העלאה
-        <input type="file" id="uploader" name="images[]" multiple class="uploader-input">
-      </label>
+    <div class="upload-steps">
+      <div class="upload-steps--item">
+          <h1 class="upload-steps--item--header">1.</h1>
+          <label for="uploader" class="text-label">
+            בחירת שם
+            <input type="text" id="collection" class="text-input" placeholder="שם האוסף">
+          </label>
+      </div>
+
+      <div class="upload-steps--item">
+          <h1 class="upload-steps--item--header">2.</h1>
+          <label for="uploader" class="button uploader-wrapper">
+            בחירת קבצים
+            <input type="file" id="uploader" multiple class="uploader-input">
+          </label>
+          <div id="status" class="status"></div>
+      </div>
+
+      <div class="upload-steps--item">
+          <h1 class="upload-steps--item--header">3.</h1>
+          <div class="submit-wrapper">
+            <button class="button" id="submit">שליחה</button>
+            <button class="button" id="clear">ניקוי</button>
+          </div>
+      </div>
+    </div>
   </div>
 </body>
 

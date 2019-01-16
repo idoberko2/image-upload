@@ -1,6 +1,7 @@
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background-image: linear-gradient(to bottom right, #585151, #222222);
+  direction: rtl;
 }
 
 .button-container {
@@ -13,16 +14,66 @@ body {
   justify-content: center;
 }
 
+.upload-steps {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  height: 30em;
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-steps--item {
+  margin: 0;
+  padding: 0;
+}
+
+.upload-steps--item--header {
+  font-size: 3em;
+  color: #ff5454;
+  margin: 0 0 .5em;
+  width: 3em;
+}
+
 .uploader-wrapper {
   overflow: hidden;
   position: relative;
+  width: 100%;
+  display: block;
+}
 
-  color: rgb(180, 180, 180);
-  background-image: linear-gradient(to bottom left, #851212, #990505);
-  font-size: 2em;
-  padding: 1em 4em;
+.button {
+  color: rgb(231, 231, 231);
+  background-color: #ff5454;
+  font-size: 1.3em;
+  padding: .7em 0;
   border-radius: .5em;
-  border: 2px solid rgb(160, 160, 160);
+  border: 0;
+  transition: all 200ms;
+  cursor: pointer;  
+  text-align: center;
+}
+
+.button:hover {
+  background-color: #a73a3a;
+}
+
+.button:active {
+  background-color: azure;
+  color: #333;
+}
+
+.submit-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.submit-wrapper .button {
+  width: 48%;
+}
+
+.status {
+  color: azure;
 }
 
 .uploader-input {
