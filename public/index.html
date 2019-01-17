@@ -1,41 +1,16 @@
 <html>
 
 <head>
-  <title>Express</title>
+  <title>קטמון - העלאת תמונות</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script type="text/javascript" src="/javascripts/script.js"></script>
+  <script crossorigin src="https://unpkg.com/react@15/dist/react.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
 </head>
 
 <body>
-  <div class="button-container">
-    <div class="upload-steps">
-      <div class="upload-steps--item">
-          <h1 class="upload-steps--item--header">1.</h1>
-          <label for="uploader" class="text-label">
-            בחירת שם
-            <input type="text" id="collection" class="text-input" placeholder="שם האוסף">
-          </label>
-      </div>
-
-      <div class="upload-steps--item">
-          <h1 class="upload-steps--item--header">2.</h1>
-          <label for="uploader" class="button uploader-wrapper">
-            בחירת קבצים
-            <input type="file" id="uploader" multiple class="uploader-input">
-          </label>
-          <div id="status" class="status"></div>
-      </div>
-
-      <div class="upload-steps--item">
-          <h1 class="upload-steps--item--header">3.</h1>
-          <div class="submit-wrapper">
-            <button class="button" id="submit">שליחה</button>
-            <button class="button" id="clear">ניקוי</button>
-          </div>
-      </div>
-    </div>
-  </div>
+  <div class="app" id="app" />
+  <script type="text/javascript" src="/javascripts/script.js"></script> 
 </body>
 
 </html>
