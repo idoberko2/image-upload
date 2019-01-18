@@ -1,7 +1,16 @@
+:root {
+  --main-color: #4d4e4d;
+  --secondary-color: #a73a3a;
+  --secondary-color-light: #e04e4e;
+  --error-color: #d80000;
+  --success-color: #4c9a4c;
+}
+
 body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background-image: linear-gradient(to bottom right, #585151, #222222);
+  font: 1em Arial;
+  background-image: linear-gradient(to bottom right, #a1a1a1, #cfcfcf);
   direction: rtl;
+  color: var(--main-color);
 }
 
 .app {
@@ -14,8 +23,7 @@ body {
   justify-content: center;
 }
 
-.upload-steps {
-  list-style-type: none;
+.main {
   margin: 0;
   padding: 0;
   height: 30em;
@@ -24,11 +32,29 @@ body {
   flex-direction: column;
 }
 
+.row-align {
+  display: flex;
+  align-items: center;
+}
+
+.row-align > * {
+  margin-left: .5em;
+}
+
+.upload-steps {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+
+.upload-steps-enter, .upload-steps-exit {
+  opacity: 0;
+}
+
 .upload-steps--item {
   margin: 0;
   padding: 0;
   padding-top: 2em;
-  border-bottom: 1px solid #636363;
+  border-bottom: 1px solid #adadad;
 }
 
 .upload-steps--item:first-child {
@@ -40,15 +66,14 @@ body {
 }
 
 .upload-steps--item--header {
-  font-size: 3em;
-  color: #ff5454;
+  font-size: 4em;
+  color: var(--main-color);
   margin: 0 0 .1em;
 }
 
 .upload-steps--item--description {
   font-size: .4em;
   font-weight: normal;
-  color: azure;
   margin: 0 .5em;
 }
 
@@ -58,6 +83,7 @@ body {
   padding: .7em 1em;
   width: 100%;
   font-size: 1.3em;
+  border: 1px solid #a2a2a2;
 }
 
 .uploader-wrapper {
@@ -73,7 +99,7 @@ body {
 
 .button {
   color: rgb(231, 231, 231);
-  background-color: #ff5454;
+  background-color: var(--main-color);
   font-size: 1.3em;
   padding: .7em 0;
   border-radius: .5em;
@@ -82,14 +108,15 @@ body {
   cursor: pointer;  
   text-align: center;
   width: 100%;
+  border: 1px solid var(--main-color);
 }
 
-.button:hover {
-  background-color: #a73a3a;
+.button:hover:not(:disabled) {
+  background-color: var(--secondary-color);
 }
 
-.button:active {
-  background-color: azure;
+.button:active:not(:disabled) {
+  background-color: var(--secondary-color-light);
   color: #333;
 }
 
@@ -98,10 +125,46 @@ body {
   opacity: .7;
 }
 
+.icon {
+  fill: var(--main-color);
+}
+
+.icon__small {
+  width: 2em;
+  height: 2em;
+}
+
+.icon__success {
+  fill: var(--success-color);
+}
+
+.icon__error {
+  fill: var(--error-color);
+}
+
 .status {
   height: 2em;
   margin-top: .5em;
-  color: azure;
+}
+
+.success {
+  opacity: 0;
+  transition: opacity 500ms;
+}
+
+.success-enter, .success-exit {
+  opacity: 0;
+}
+
+.success-enter-done {
+  opacity: 1;
+}
+
+.success-message {
+  font-size: 2em;
+  color: var(--main-color);
+  margin-bottom: 1em;
+  text-align: center;
 }
 
 .uploader-input {
