@@ -30,12 +30,27 @@ function validateFiles(files) {
     return true;
 }
 
+const StepHeader = React.createClass({
+    render() {
+        return e(
+            'h1',
+            { className: 'upload-steps--item--header' }, 
+            `${this.props.step}.`,
+            e('span', { className: 'upload-steps--item--description' }, this.props.action)
+        );
+    }
+});
+
 const UploadStep = React.createClass({
     render() {
+        const {
+            step,
+            action,
+        } = this.props;
         return e(
             'div', 
             { className: 'upload-steps--item' }, 
-            e('h1', { className: 'upload-steps--item--header' }, `${this.props.step}.`),
+            e(StepHeader, { step, action }),
             this.props.children
         );
     }
@@ -86,7 +101,11 @@ const UploadForm = React.createClass({
         }
 
         if (this.isFilesValid()) {
-            return '✅ ' + this.state.files.length + ' קבצים נבחרו';
+            return '✅ ' + (
+                this.state.files.length > 1 ? 
+                    this.state.files.length + ' קבצים נבחרו' : 
+                    'קובץ אחד נבחר'
+                );
         }
 
         return '❌ לפחות אחד מהקבצים אינו תמונה';
@@ -112,12 +131,8 @@ const UploadForm = React.createClass({
             { className: 'upload-steps' }, 
             e(
                 UploadStep, 
-                {step: 1}, 
+                {step: 1, action: 'בוחרים שם לאוסף'}, 
                 e(
-                    'label',
-                    { htmlFor: 'collection', className: 'text-label' },
-                    'בחירת שם',
-                    e(
                         'input',
                         {
                             type: 'text',
@@ -127,13 +142,12 @@ const UploadForm = React.createClass({
                             value: this.state.collection,
                             onChange: this.handleCollectionChange,
                         }
-                    )
-                ),
+                    ),
                 e('div', { className: 'status' }, this.getCollectionStatus())
             ),
             e(
                 UploadStep, 
-                {step: 2}, 
+                {step: 2, action: 'בוחרים תמונות'}, 
                 e(
                     'label',
                     { htmlFor: 'uploader', className: 'button uploader-wrapper' },
@@ -153,7 +167,7 @@ const UploadForm = React.createClass({
             ),
             e(
                 UploadStep, 
-                {step: 3}, 
+                {step: 3, action: 'שולחים'}, 
                 e(
                     'div',
                     { className: 'submit-wrapper' },

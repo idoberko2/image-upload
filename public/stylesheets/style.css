@@ -27,13 +27,37 @@ body {
 .upload-steps--item {
   margin: 0;
   padding: 0;
+  padding-top: 2em;
+  border-bottom: 1px solid #636363;
+}
+
+.upload-steps--item:first-child {
+  padding-top: 0;
+}
+
+.upload-steps--item:last-child {
+  border-bottom: 0;
 }
 
 .upload-steps--item--header {
   font-size: 3em;
   color: #ff5454;
-  margin: 0 0 .5em;
-  width: 3em;
+  margin: 0 0 .1em;
+}
+
+.upload-steps--item--description {
+  font-size: .4em;
+  font-weight: normal;
+  color: azure;
+  margin: 0 .5em;
+}
+
+.text-input {
+  border: none;
+  border-radius: .5em;
+  padding: .7em 1em;
+  width: 100%;
+  font-size: 1.3em;
 }
 
 .uploader-wrapper {
@@ -75,6 +99,8 @@ body {
 }
 
 .status {
+  height: 2em;
+  margin-top: .5em;
   color: azure;
 }
 
@@ -93,4 +119,8 @@ body {
 
   /* style */
   cursor: pointer;
+}
+
+::placeholder, :-ms-input-placeholder, ::-ms-input-placeholder {
+  text-align: center;
 }
