@@ -8,7 +8,7 @@ function sendFiles({ collection, files }) {
         formData.append('image', file);
         formData.append('collection', collection);
 
-        axios.post('/upload', formData, {
+        return axios.post('/upload', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -16,9 +16,7 @@ function sendFiles({ collection, files }) {
     });
 
     return axios
-        .all(promises)
-        .then(() => console.log('mush success!'))
-        .catch(err => console.error({err}));
+        .all(promises);
 }
 
 function validateFiles(files) {
@@ -90,6 +88,8 @@ const UploadStep = React.createClass({
 });
 
 const UploadForm = React.createClass({
+    filesRef: null,
+
     getInitialState() {
         return {
             files: null,
@@ -97,6 +97,7 @@ const UploadForm = React.createClass({
             collectionChanged: false,
             formVisible: true,
             successVisible: false,
+            submitError: null,
         };
     },
 
@@ -149,15 +150,18 @@ const UploadForm = React.createClass({
         return this.isCollectionValid() && this.isFilesValid();
     },
 
-    handleSubmit() {
-        sendFiles(this.state)
-            .then(() => this.setState({formVisible: false}));
+    getSubmissionStatus() {
+        return !this.state.submitError ? null :
+            e('div', {className: 'row-align'}, e(ErrorMark, {className: 'icon__small'}), e('div', null, 'קרתה שגיאה במהלך השליחה :('));
     },
 
-    handleClear() {
-        this.setState({
-            files: null,
-        });
+    handleSubmit() {
+        sendFiles(this.state)
+            .then(() => {
+                this.filesRef.value = '';
+                this.setState(Object.assign(this.getInitialState(), { formVisible: false }));
+            })
+            .catch(err => this.setState({submitError: err}));
     },
 
     render() {
@@ -212,6 +216,7 @@ const UploadForm = React.createClass({
                                     className: 'uploader-input',
                                     multiple: true,
                                     onChange: this.handleFilesSelection,
+                                    ref: c => this.filesRef = c,
                                 }
                             )
                         ),
@@ -228,7 +233,8 @@ const UploadForm = React.createClass({
                                 disabled: !this.isValid(),
                                 onClick: this.handleSubmit,
                             }, 'שליחה'),
-                        )
+                        ),
+                        e('div', { className: 'status' }, this.getSubmissionStatus())
                     )
                 )
             ),
