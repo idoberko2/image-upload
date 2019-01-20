@@ -61,4 +61,4 @@ typings/
 .next
 
 # temporary uploads dir
-tmpUploads
+uploads

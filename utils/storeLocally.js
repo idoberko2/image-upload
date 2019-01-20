@@ -1,13 +1,16 @@
 const fs = require('fs');
+const fx = require('mkdir-recursive');
+const path = require('path');
 
-let folderCreationPromise = null;
+const uploadsFolder = process.env.UPLOADS_FOLDER || 'uploads';
+let folderCreationPromises = {};
 
-function createFolderIfNotExists(path) {
-    if (folderCreationPromise === null) {
-        folderCreationPromise = new Promise((resolve, reject) => {
+function createBaseFolderIfNotExists(path) {
+    if (!folderCreationPromises[path]) {
+        folderCreationPromises[path] = new Promise((resolve, reject) => {
             fs.access(path, err => {
                 if (err) {
-                    fs.mkdir(path, err => {
+                    fx.mkdir(path, err => {
                         if (err) {
                             reject(err);
                         } else {
@@ -21,15 +24,15 @@ function createFolderIfNotExists(path) {
         });
     }
 
-    return folderCreationPromise;
+    return folderCreationPromises[path];
 }
 
 function storeLocally(imageStream, collection, fileName) {
     return new Promise(async (resolve, reject) => {
-        const path = `${__dirname}/../tmpUploads/${collection}`;        
-        const filePath = `${path}/${Math.random()}_${fileName}`;
+        const basePath = path.join(__dirname, '..', uploadsFolder, collection);
+        const filePath = path.join(basePath, `${Math.random()}_${fileName}`);
 
-        await createFolderIfNotExists(path);
+        await createBaseFolderIfNotExists(basePath);
 
         const writeStream = fs.createWriteStream(filePath);
 
