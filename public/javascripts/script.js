@@ -2,21 +2,18 @@ const e = React.createElement;
 const { CSSTransition } = ReactTransitionGroup;
 
 function sendFiles({ collection, files }) {
-    const promises = Array.from(files).map(file => {
-        const formData = new FormData();
+    const formData = new FormData();
+    formData.append('collection', collection);
 
-        formData.append('image', file);
-        formData.append('collection', collection);
-
-        return axios.post('/upload', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+    Array.from(files).forEach(file => {
+        formData.append('images', file);
     });
 
-    return axios
-        .all(promises);
+    return axios.post('/upload', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
 }
 
 function validateFiles(files) {

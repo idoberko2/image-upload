@@ -1,21 +1,27 @@
 const fs = require('fs');
 
+let folderCreationPromise = null;
+
 function createFolderIfNotExists(path) {
-    return new Promise((resolve, reject) => {
-        fs.access(path, err => {
-            if (err) {
-                fs.mkdir(path, err => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve();
-                    }
-                });
-            } else {
-                resolve();
-            }
-        })
-    });
+    if (folderCreationPromise === null) {
+        folderCreationPromise = new Promise((resolve, reject) => {
+            fs.access(path, err => {
+                if (err) {
+                    fs.mkdir(path, err => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    });
+                } else {
+                    resolve();
+                }
+            })
+        });
+    }
+
+    return folderCreationPromise;
 }
 
 function storeLocally(imageStream, collection, fileName) {
