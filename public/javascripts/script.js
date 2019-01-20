@@ -95,6 +95,7 @@ const UploadForm = React.createClass({
             formVisible: true,
             successVisible: false,
             submitError: null,
+            isLoading: false,
         };
     },
 
@@ -153,18 +154,21 @@ const UploadForm = React.createClass({
     },
 
     handleSubmit() {
-        sendFiles(this.state)
+        this.setState({isLoading: true}, () => {
+            sendFiles(this.state)
             .then(() => {
                 this.filesRef.value = '';
                 this.setState(Object.assign(this.getInitialState(), { formVisible: false }));
             })
-            .catch(err => this.setState({submitError: err}));
+            .catch(err => this.setState({submitError: err, isLoading: false}));
+        });
     },
 
     render() {
         const {
             formVisible,
             successVisible,
+            isLoading,
         } = this.state;
 
         return e(
@@ -194,6 +198,7 @@ const UploadForm = React.createClass({
                                     placeholder: 'שם האוסף',
                                     value: this.state.collection,
                                     onChange: this.handleCollectionChange,
+                                    disabled: isLoading,
                                 }
                             ),
                         e('div', { className: 'status' }, this.getCollectionStatus())
@@ -203,7 +208,7 @@ const UploadForm = React.createClass({
                         {step: 2, action: 'בוחרים תמונות'}, 
                         e(
                             'label',
-                            { htmlFor: 'uploader', className: 'button uploader-wrapper' },
+                            { htmlFor: 'uploader', className: `button uploader-wrapper ${isLoading ? 'button__disabled' : null}` },
                             'בחירת קבצים',
                             e(
                                 'input',
@@ -214,6 +219,7 @@ const UploadForm = React.createClass({
                                     multiple: true,
                                     onChange: this.handleFilesSelection,
                                     ref: c => this.filesRef = c,
+                                    disabled: isLoading,
                                 }
                             )
                         ),
@@ -225,11 +231,15 @@ const UploadForm = React.createClass({
                         e(
                             'div',
                             { className: 'submit-wrapper' },
-                            e('button',{ 
-                                className: 'button', 
-                                disabled: !this.isValid(),
-                                onClick: this.handleSubmit,
-                            }, 'שליחה'),
+                            e(
+                                'button',
+                                { 
+                                    className: 'button', 
+                                    disabled: !this.isValid() || isLoading,
+                                    onClick: this.handleSubmit,
+                                }, 
+                                isLoading ? e('span', { className: 'spinner' }) : e('span', null, 'שליחה')
+                            ),
                         ),
                         e('div', { className: 'status' }, this.getSubmissionStatus())
                     )

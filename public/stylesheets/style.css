@@ -78,12 +78,18 @@ body {
 }
 
 .text-input {
+  opacity: 1;
   border: none;
   border-radius: .5em;
   padding: .7em 1em;
   width: 100%;
   font-size: 1.3em;
   border: 1px solid #a2a2a2;
+  transition: opacity 200ms;
+}
+
+.text-input:disabled {
+  opacity: .7;
 }
 
 .uploader-wrapper {
@@ -109,18 +115,20 @@ body {
   text-align: center;
   width: 100%;
   border: 1px solid var(--main-color);
+  opacity: 1;
+  transition: opacity 200ms;
 }
 
-.button:hover:not(:disabled) {
+.button:hover:not(:disabled):not(.button__disabled) {
   background-color: var(--secondary-color);
 }
 
-.button:active:not(:disabled) {
+.button:active:not(:disabled):not(.button__disabled) {
   background-color: var(--secondary-color-light);
   color: #333;
 }
 
-.button:disabled {
+.button:disabled, .button__disabled {
   cursor: default;
   opacity: .7;
 }
@@ -167,6 +175,24 @@ body {
   text-align: center;
 }
 
+@keyframes spin {
+  to { -webkit-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+  to { -webkit-transform: rotate(360deg); }
+}
+
+.spinner {
+  display: inline-block;
+  width: .86em;
+  height: .86em;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: rgb(231, 231, 231);
+  animation: spin .6s linear infinite;
+  -webkit-animation: spin .6s linear infinite;
+}
+
 .uploader-input {
   /* hiding original input */
   display: block;
@@ -182,6 +208,10 @@ body {
 
   /* style */
   cursor: pointer;
+}
+
+.uploader-input:disabled {
+  cursor: default;
 }
 
 ::placeholder, :-ms-input-placeholder, ::-ms-input-placeholder {
