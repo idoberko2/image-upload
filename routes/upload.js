@@ -6,17 +6,15 @@ const fs = require('fs');
 
 // Utils
 const processImage = require('../utils/processImage');
-const storeLocally = require('../utils/storeLocally');
 const {
-  isAvailable: isMediaPlatformAvailable,
-  storeMediaPlatform,
-} = require('../utils/storeMediaPlatform');
+  storageFunction,
+  localStoragePublicPath,
+} = require('../utils/storageService');
 
 // multer middleware
 const upload = multer({ dest: '/tmp/uploads' });
 
 // handlers
-const storageFunction = isMediaPlatformAvailable ? storeMediaPlatform : storeLocally;
 const removeTempFile = path => new Promise((resolve, reject) => {
   fs.unlink(path, err => {
     if (err) {
@@ -36,14 +34,21 @@ router.post('/', upload.array('images'), async function(req, res) {
       collection,
     } = req.body;
     const processedImage = processImage(path);
-    await storageFunction(processedImage, collection, originalname);
+    const storagePath = await storageFunction(
+      processedImage, 
+      collection, 
+      originalname,
+      `${req.protocol}://${req.get('host')}/${localStoragePublicPath}`
+    );
 
-    return removeTempFile(path);
+    await removeTempFile(path);
+
+    return storagePath;
   });
   
-  await Promise.all(promises);
+  const urls = await Promise.all(promises);
 
-  return res.sendStatus(200);
+  return res.json({urls});
 });
 
 module.exports = router;

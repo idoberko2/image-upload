@@ -27,17 +27,18 @@ function createBaseFolderIfNotExists(path) {
     return folderCreationPromises[path];
 }
 
-function storeLocally(imageStream, collection, fileName) {
+function storeLocally(imageStream, collection, fileName, prefix = '') {
     return new Promise(async (resolve, reject) => {
-        const basePath = path.join(__dirname, '..', uploadsFolder, collection);
-        const filePath = path.join(basePath, `${Math.random()}_${fileName}`);
+        const uploadsPath = path.join(__dirname, '..', uploadsFolder);
+        const collectionFolder = path.join(uploadsPath, collection);
+        const storageFileName = `${Math.random()}_${fileName}`;
 
-        await createBaseFolderIfNotExists(basePath);
+        await createBaseFolderIfNotExists(collectionFolder);
 
-        const writeStream = fs.createWriteStream(filePath);
+        const writeStream = fs.createWriteStream(path.join(collectionFolder, storageFileName));
 
         writeStream.on('finish', function () {
-            resolve();
+            resolve(`${prefix}/${collection}/${storageFileName}`);
         });
 
         writeStream.on('error', function (err) {

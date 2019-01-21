@@ -1,26 +1,23 @@
 const { MediaPlatform } = require('media-platform-js-sdk');
 
-const {
-    WMP_DOMAIN,
-    WMP_APPID,
-    WMP_SHARED_SECRET,
-} = process.env;
-
-const mediaPlatform = new MediaPlatform({
-    domain: WMP_DOMAIN,
-    appId: WMP_APPID,
-    sharedSecret: WMP_SHARED_SECRET,
-});
-
-function storeMediaPlatform(imageStream, collection, fileName) {
-    const path = `/${collection}/${fileName}`;
-
-    return mediaPlatform.fileManager.uploadFile(path, imageStream);
+function generateStorageFunction(WMP_DOMAIN, WMP_APPID, WMP_SHARED_SECRET) {
+    const mediaPlatform = new MediaPlatform({
+        domain: WMP_DOMAIN,
+        appId: WMP_APPID,
+        sharedSecret: WMP_SHARED_SECRET,
+    });
+    
+    return async function storeMediaPlatform(imageStream, collection, fileName) {
+        const path = `/${collection}/${fileName}`;
+    
+        // https://wix.github.io/media-platform-js-sdk/file-Management#filedescriptor
+        const { path: storagePath } = await mediaPlatform
+            .fileManager
+            .uploadFile(path, imageStream);
+        return storagePath;
+    }
 }
 
-const isAvailable = WMP_APPID && WMP_DOMAIN && WMP_SHARED_SECRET;
 
-module.exports = {
-    isAvailable,
-    storeMediaPlatform,
-};
+
+module.exports = generateStorageFunction;
