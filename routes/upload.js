@@ -47,6 +47,7 @@ router.post('/', upload.array('images'), async function(req, res) {
   });
   
   const urls = await Promise.all(promises);
+  console.info({urls});
 
   return res.json({urls});
 });
