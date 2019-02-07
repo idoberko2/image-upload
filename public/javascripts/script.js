@@ -3,7 +3,7 @@ const { CSSTransition } = ReactTransitionGroup;
 
 function sendFiles({ collection, files }) {
     const formData = new FormData();
-    formData.append('collection', collection);
+    formData.append('collection', collection.trim());
 
     Array.from(files).forEach(file => {
         formData.append('images', file);
@@ -108,8 +108,14 @@ const UploadForm = React.createClass({
     },
 
     handleFilesSelection(event) {
+        const { files } = event.target;
+
+        if (!files || files.length === 0) {
+            return;
+        }
+
         this.setState({
-            files: event.target.files,
+            files,
         });
     },
 
@@ -120,7 +126,7 @@ const UploadForm = React.createClass({
     getCollectionStatus() {
         return this.isCollectionValid() ? 
             null :
-            e('div', {className: 'row-align'}, e(ErrorMark, {className: 'icon__small'}), e('div', null, 'שם האוסף לא יכול להיות ריק'));
+            e('div', {className: 'row-align'}, e(ErrorMark, {className: 'icon__small'}), e('div', null, 'שם האלבום לא יכול להיות ריק'));
     },
 
     isFilesValid() {
@@ -150,7 +156,7 @@ const UploadForm = React.createClass({
 
     getSubmissionStatus() {
         return !this.state.submitError ? null :
-            e('div', {className: 'row-align'}, e(ErrorMark, {className: 'icon__small'}), e('div', null, 'קרתה שגיאה במהלך השליחה :('));
+            e('div', {className: 'row-align'}, e(ErrorMark, {className: 'icon__small'}), e('div', null, 'קרתה שגיאה במהלך העלאת הקבציפ :('));
     },
 
     handleSubmit() {
@@ -188,14 +194,14 @@ const UploadForm = React.createClass({
                     { className: 'upload-steps main' }, 
                     e(
                         UploadStep, 
-                        {step: 1, action: 'בוחרים שם לאוסף'}, 
+                        {step: 1, action: 'בוחרים שם לאלבום'}, 
                         e(
                                 'input',
                                 {
                                     type: 'text',
                                     id: 'collection',
                                     className: 'text-input',
-                                    placeholder: 'שם האוסף',
+                                    placeholder: 'שם האלבום',
                                     value: this.state.collection,
                                     onChange: this.handleCollectionChange,
                                     disabled: isLoading,
@@ -209,7 +215,7 @@ const UploadForm = React.createClass({
                         e(
                             'label',
                             { htmlFor: 'uploader', className: `button uploader-wrapper ${isLoading ? 'button__disabled' : null}` },
-                            'בחירת קבצים',
+                            'בחירת תמונות',
                             e(
                                 'input',
                                 {
@@ -220,6 +226,7 @@ const UploadForm = React.createClass({
                                     onChange: this.handleFilesSelection,
                                     ref: c => this.filesRef = c,
                                     disabled: isLoading,
+                                    accept: 'image/*',
                                 }
                             )
                         ),
@@ -227,7 +234,7 @@ const UploadForm = React.createClass({
                     ),
                     e(
                         UploadStep, 
-                        {step: 3, action: 'שולחים'}, 
+                        {step: 3, action: 'מעלים'}, 
                         e(
                             'div',
                             { className: 'submit-wrapper' },
@@ -238,7 +245,7 @@ const UploadForm = React.createClass({
                                     disabled: !this.isValid() || isLoading,
                                     onClick: this.handleSubmit,
                                 }, 
-                                isLoading ? e('span', { className: 'spinner' }) : e('span', null, 'שליחה')
+                                isLoading ? e('span', { className: 'spinner' }) : e('span', null, 'העלאה')
                             ),
                         ),
                         e('div', { className: 'status' }, this.getSubmissionStatus())
