@@ -10,6 +10,7 @@
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "gm": "^1.23.1",
+    "htm": "^2.0.0",
     "image-size": "^0.7.1",
     "media-platform-js-sdk": "^6.0.5",
     "mkdir-recursive": "^0.4.0",

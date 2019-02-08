@@ -13,6 +13,7 @@ const app = express();
 
 app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/assets/htm', express.static(path.join(__dirname, 'node_modules', 'htm')));
 
 app.use('/', indexRouter);
 app.use('/upload', uploadRouter);

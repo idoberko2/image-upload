@@ -1,4 +1,6 @@
 const e = React.createElement;
+import htm from '/assets/htm/dist/htm.mjs';
+const html = htm.bind(React.createElement);
 const { CSSTransition } = ReactTransitionGroup;
 
 function sendFiles({ collection, files }) {
@@ -17,7 +19,7 @@ function sendFiles({ collection, files }) {
 }
 
 function validateFiles(files) {
-    for (file of files) {
+    for (const file of files) {
         if (!/image\/[a-zA-Z]+$/.test(file.type)) {
             return false;
         }
@@ -26,63 +28,39 @@ function validateFiles(files) {
     return true;
 }
 
-const Icon = React.createClass({
-    render() {
-        const {
-            path,
-            className,
-        } = this.props;
-        return e(
-            'svg', 
-            {viewBox: '0 0 512 512', className:`icon ${className}`}, 
-            e('path', {d: path})
-        );
-    }
-});
+const Icon = ({ path, className }) => html`
+    <svg className="${`icon ${className}`}" viewBox='0 0 512 512'>
+        <path d=${path}><//>
+    <//>
+`;
 
-const CheckMark = React.createClass({
-    render() {
-        return e(
-            Icon, 
-            {className: `icon__success ${this.props.className}`, path: 'M186.301 339.893L96 249.461l-32 30.507L186.301 402 448 140.506 416 110z'}, 
-        );
-    }
-});
+const CheckMark = ({className}) => html`
+    <${Icon} className="${`icon__success ${className}`}"
+             path="M186.301 339.893L96 249.461l-32 30.507L186.301 402 448 140.506 416 110z"
+    />
+`;
 
-const ErrorMark = React.createClass({
-    render() {
-        return e(
-            Icon, 
-            {className: `icon__error ${this.props.className}`, path: 'M405 136.798L375.202 107 256 226.202 136.798 107 107 136.798 226.202 256 107 375.202 136.798 405 256 285.798 375.202 405 405 375.202 285.798 256z'}, 
-        );
-    }
-});
+const ErrorMark = ({className}) => html`
+    <${Icon} className="${`icon__error ${className}`}"
+             path="M405 136.798L375.202 107 256 226.202 136.798 107 107 136.798 226.202 256 107 375.202 136.798 405 256 285.798 375.202 405 405 375.202 285.798 256z"
+    />
+`;
 
-const StepHeader = React.createClass({
-    render() {
-        return e(
-            'h1',
-            { className: 'upload-steps--item--header' }, 
-            `${this.props.step}`,
-            e('span', { className: 'upload-steps--item--description' }, this.props.action)
-        );
-    }
-});
+const StepHeader = ({ step, action }) => html`
+    <h1 className="upload-steps--item--header">
+        ${step}
+        <span className="upload-steps--item--description">
+            ${action}
+        <//>
+    <//>
+`;
 
-const UploadStep = React.createClass({
-    render() {
-        const {
-            step,
-            action,
-        } = this.props;
-        return e(
-            'div', 
-            { className: 'upload-steps--item' }, 
-            e(StepHeader, { step, action }),
-            this.props.children
-        );
-    }
-});
+const UploadStep = ({step, action, children}) => html`
+    <div className="upload-steps--item">
+        <${StepHeader} step=${step} action=${action} />
+        ${children}    
+    <//>
+`;
 
 const UploadForm = React.createClass({
     filesRef: null,
