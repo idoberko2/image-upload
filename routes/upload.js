@@ -7,49 +7,45 @@ const fs = require('fs');
 // Utils
 const processImage = require('../utils/processImage');
 const {
-  storageFunction,
-  localStoragePublicPath,
+    storageFunction,
+    localStoragePublicPath,
 } = require('../utils/storageService');
 
 // multer middleware
 const upload = multer({ dest: '/tmp/uploads' });
 
 // handlers
-const removeTempFile = path => new Promise((resolve, reject) => {
-  fs.unlink(path, err => {
-    if (err) {
-      return reject(err);
-    }
-    return resolve();
-  });
-});
+const removeTempFile = path =>
+    new Promise((resolve, reject) => {
+        fs.unlink(path, err => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve();
+        });
+    });
 
 router.post('/', upload.array('images'), async function(req, res) {
-  const promises = req.files.map(async file => {
-    const {
-      path,
-      originalname,
-    } = file;
-    const {
-      collection,
-    } = req.body;
-    const processedImage = processImage(path);
-    const storagePath = await storageFunction(
-      processedImage, 
-      collection, 
-      originalname,
-      `${req.protocol}://${req.get('host')}/${localStoragePublicPath}`
-    );
+    const promises = req.files.map(async file => {
+        const { path, originalname } = file;
+        const { collection } = req.body;
+        const processedImage = processImage(path);
+        const storagePath = await storageFunction(
+            processedImage,
+            collection,
+            originalname,
+            `${req.protocol}://${req.get('host')}/${localStoragePublicPath}`
+        );
 
-    await removeTempFile(path);
+        await removeTempFile(path);
 
-    return storagePath;
-  });
-  
-  const urls = await Promise.all(promises);
-  console.info({urls});
+        return storagePath;
+    });
 
-  return res.json({urls});
+    const urls = await Promise.all(promises);
+    console.info({ urls });
+
+    return res.json({ urls });
 });
 
 module.exports = router;

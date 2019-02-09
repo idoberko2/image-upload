@@ -6,11 +6,7 @@ const logo = fs.readFileSync(`${__dirname}/../assets/watermark.png`);
 const resizeTo = process.env.RESIZE_PIXELS || 900;
 
 function processImage(image) {
-    const {
-        width,
-        height,
-    } = sizeOf(image);
-
+    const { width, height } = sizeOf(image);
     const isLandscape = width > height;
     const resizeWidthTo = isLandscape ? resizeTo : null;
     const resizeHeightTo = isLandscape ? null : resizeTo;
