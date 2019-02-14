@@ -1,24 +1,28 @@
 const path = require('path');
-const NodemonPlugin = require('nodemon-webpack-plugin');
+const webpack = require('webpack');
 
 const config = {
-    entry: './src-client/js/index.js',
+    entry: [path.join(__dirname, 'src-client', 'js', 'index.js')],
     output: {
         filename: 'index.js',
         path: path.resolve(__dirname, 'public', 'js'),
+        publicPath: '/js/',
     },
 };
 
 module.exports = (env, argv) => {
-    if (argv.mode === 'development') {
+    if (env.NODE_ENV === 'development' || argv.mode === 'development') {
         config.plugins = [
-            new NodemonPlugin({
-                script: './bin/www',
-            }),
+            new webpack.HotModuleReplacementPlugin(),
+            new webpack.NoEmitOnErrorsPlugin(),
         ];
         config.optimization = {
             minimize: false,
         };
+        config.entry = ['webpack-hot-middleware/client', ...config.entry];
+        config.mode = 'development';
+    } else {
+        config.mode = 'production';
     }
 
     return config;
