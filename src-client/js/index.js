@@ -5,6 +5,9 @@ import html from './utils/html';
 // components
 import UploadForm from './components/UploadForm';
 
+// styles
+import css from '../stylesheets/style.css';
+
 ReactDOM.render(
     html`
         <${UploadForm} />

@@ -39,13 +39,10 @@ function storeLocally(imageStream, collection, fileName, prefix = '') {
             path.join(collectionFolder, storageFileName)
         );
 
-        writeStream.on('finish', function() {
-            resolve(`${prefix}/${collection}/${storageFileName}`);
-        });
-
-        writeStream.on('error', function(err) {
-            reject(err);
-        });
+        writeStream.on('finish', () =>
+            resolve(`${prefix}/${collection}/${storageFileName}`)
+        );
+        writeStream.on('error', err => reject(err));
 
         imageStream.pipe(writeStream);
     });

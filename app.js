@@ -20,7 +20,6 @@ if (process.env.NODE_ENV === 'development') {
 
     app.use(
         require('webpack-dev-middleware')(compiler, {
-            publicPath: webpackConfig.output.publicPath,
             noInfo: true,
         })
     );

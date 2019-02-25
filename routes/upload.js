@@ -25,7 +25,7 @@ const removeTempFile = path =>
         });
     });
 
-router.post('/', upload.array('images'), async function(req, res) {
+router.post('/', upload.array('images'), async (req, res) => {
     const promises = req.files.map(async file => {
         const { path, originalname } = file;
         const { collection } = req.body;

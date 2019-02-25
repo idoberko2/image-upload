@@ -64,4 +64,4 @@ typings/
 uploads
 
 # dist files
-public/js
+public
