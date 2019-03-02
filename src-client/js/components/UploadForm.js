@@ -172,7 +172,10 @@ class UploadForm extends React.Component {
                                         onChange=${this.handleCollectionChange}
                                         disabled=${isLoading}
                                     />
-                                    <div className="status">
+                                    <div
+                                        className="status"
+                                        data-testid="collection-status"
+                                    >
                                         ${this.getCollectionStatus()}
                                     <//>
                                 <//>
@@ -198,7 +201,10 @@ class UploadForm extends React.Component {
                                             accept="image/*"
                                         />
                                     <//>
-                                    <div className="status">
+                                    <div
+                                        className="status"
+                                        data-testid="uploader-status"
+                                    >
                                         ${this.getFilesStatus()}
                                     <//>
                                 <//>
@@ -209,6 +215,7 @@ class UploadForm extends React.Component {
                                             disabled=${!this.isValid() ||
                                                 isLoading}
                                             onClick=${this.handleSubmit}
+                                            data-testid="submit-button"
                                         >
                                             <span
                                                 className="${isLoading
