@@ -20,7 +20,7 @@ function createBaseFolderIfNotExists(path) {
                 } else {
                     resolve();
                 }
-            })
+            });
         });
     }
 
@@ -35,15 +35,14 @@ function storeLocally(imageStream, collection, fileName, prefix = '') {
 
         await createBaseFolderIfNotExists(collectionFolder);
 
-        const writeStream = fs.createWriteStream(path.join(collectionFolder, storageFileName));
+        const writeStream = fs.createWriteStream(
+            path.join(collectionFolder, storageFileName)
+        );
 
-        writeStream.on('finish', function () {
-            resolve(`${prefix}/${collection}/${storageFileName}`);
-        });
-
-        writeStream.on('error', function (err) {
-            reject(err);
-        });
+        writeStream.on('finish', () =>
+            resolve(`${prefix}/${collection}/${storageFileName}`)
+        );
+        writeStream.on('error', err => reject(err));
 
         imageStream.pipe(writeStream);
     });

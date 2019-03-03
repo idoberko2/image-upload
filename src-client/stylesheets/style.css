@@ -41,13 +41,22 @@ body {
   margin-left: .5em;
 }
 
-.upload-steps {
-  opacity: 1;
-  transition: opacity 300ms;
+.fade-in-out-enter {
+  opacity: 0.01;
 }
 
-.upload-steps-enter, .upload-steps-exit {
-  opacity: 0;
+.fade-in-out-enter-active {
+  opacity: 1;
+  transition: opacity 500ms;
+}
+
+.fade-in-out-leave {
+  opacity: 1;
+}
+
+.fade-in-out-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms;
 }
 
 .upload-steps--item {
@@ -153,19 +162,6 @@ body {
 .status {
   height: 2em;
   margin-top: .5em;
-}
-
-.success {
-  opacity: 0;
-  transition: opacity 500ms;
-}
-
-.success-enter, .success-exit {
-  opacity: 0;
-}
-
-.success-enter-done {
-  opacity: 1;
 }
 
 .success-message {
