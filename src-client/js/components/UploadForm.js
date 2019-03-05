@@ -1,11 +1,12 @@
 // external
 import React from 'react';
 import { CSSTransition } from 'react-transition-group';
+import styled from '@emotion/styled';
+import { css, keyframes, Global } from '@emotion/core';
 
 // utils
 import validateFiles from '../utils/validateFiles';
 import sendFiles from '../utils/sendFiles';
-import html from '../utils/html';
 
 // components
 import CheckMark from './icons/CheckMark';
@@ -66,14 +67,14 @@ class UploadForm extends React.Component {
     }
 
     getCollectionStatus() {
-        return this.isCollectionValid()
-            ? null
-            : html`
-                  <div className="row-align">
-                      <${ErrorMark} className="icon__small" />
-                      <div>שם האלבום לא יכול להיות ריק<//>
-                  <//>
-              `;
+        return this.isCollectionValid() ? null : (
+            <StatusRow>
+                <ErrorMark css={smallIconCss} />
+                <div data-testid="collection-status">
+                    שם האלבום לא יכול להיות ריק
+                </div>
+            </StatusRow>
+        );
     }
 
     isFilesValid() {
@@ -94,20 +95,22 @@ class UploadForm extends React.Component {
                 this.state.files.length > 1
                     ? this.state.files.length + ' קבצים נבחרו'
                     : 'קובץ אחד נבחר';
-            return html`
-                <div className="row-align">
-                    <${CheckMark} className="icon__small" />
-                    <div>${text}<//>
-                <//>
-            `;
+            return (
+                <StatusRow>
+                    <CheckMark css={smallIconCss} />
+                    <div data-testid="uploader-status">{text}</div>
+                </StatusRow>
+            );
         }
 
-        return html`
-            <div className="row-align">
-                <${ErrorMark} className="icon__small" />
-                <div>לפחות אחד מהקבצים אינו תמונה<//>
-            <//>
-        `;
+        return (
+            <StatusRow>
+                <ErrorMark css={smallIconCss} />
+                <div data-testid="uploader-status">
+                    לפחות אחד מהקבצים אינו תמונה
+                </div>
+            </StatusRow>
+        );
     }
 
     isValid() {
@@ -115,14 +118,12 @@ class UploadForm extends React.Component {
     }
 
     getSubmissionStatus() {
-        return !this.state.submitError
-            ? null
-            : html`
-                  <div className="row-align">
-                      <${ErrorMark} className="icon__small" />
-                      <div>קרתה שגיאה במהלך העלאת הקבצים :(<//>
-                  <//>
-              `;
+        return !this.state.submitError ? null : (
+            <StatusRow>
+                <ErrorMark css={smallIconCss} />
+                <div>קרתה שגיאה במהלך העלאת הקבצים :(</div>
+            </StatusRow>
+        );
     }
 
     handleSubmit() {
@@ -147,125 +148,301 @@ class UploadForm extends React.Component {
     render() {
         const { formVisible, successVisible, isLoading } = this.state;
 
-        return html`
-            <div className="app">
-                <${CSSTransition}
-                    in=${formVisible}
-                    timeout=${{ enter: 500, exit: 300 }}
-                    classNames="fade-in-out"
-                    unmountOnExit
-                    onExited=${() => this.setState({ successVisible: true })}
-                >
-                    ${() =>
-                        html`
-                            <div className="main">
-                                <${UploadStep}
-                                    step="1"
-                                    action="בוחרים שם לאלבום"
-                                >
-                                    <input
+        return (
+            <>
+                <Global styles={globalStyles} />
+                <Form>
+                    <CSSTransition
+                        in={formVisible}
+                        timeout={{ enter: 500, exit: 300 }}
+                        classNames="fade-in-out"
+                        unmountOnExit
+                        onExited={() => this.setState({ successVisible: true })}
+                    >
+                        {() => (
+                            <Wrapper>
+                                <UploadStep step="1" action="בוחרים שם לאלבום">
+                                    <TextInput
                                         type="text"
                                         id="collection"
-                                        className="text-input"
                                         placeholder="שם האלבום"
-                                        value=${this.state.collection}
-                                        onChange=${this.handleCollectionChange}
-                                        disabled=${isLoading}
+                                        value={this.state.collection}
+                                        onChange={this.handleCollectionChange}
+                                        disabled={isLoading}
                                     />
-                                    <div
-                                        className="status"
-                                        data-testid="collection-status"
-                                    >
-                                        ${this.getCollectionStatus()}
-                                    <//>
-                                <//>
-                                <${UploadStep} step="2" action="בוחרים תמונות">
-                                    <label
+                                    <StatusContainer>
+                                        {this.getCollectionStatus()}
+                                    </StatusContainer>
+                                </UploadStep>
+                                <UploadStep step="2" action="בוחרים תמונות">
+                                    <UploaderWrapper
                                         htmlFor="uploader"
-                                        className="${`button uploader-wrapper ${
+                                        css={[
+                                            ButtonCss,
                                             isLoading
-                                                ? 'button__disabled'
-                                                : null
-                                        }`}"
+                                                ? DisabledButtonCss
+                                                : null,
+                                        ]}
                                     >
                                         בחירת תמונות
                                         <input
                                             type="file"
                                             id="uploader"
-                                            className="uploader-input"
+                                            css={UploaderInputCss(isLoading)}
                                             multiple
-                                            onChange=${this
-                                                .handleFilesSelection}
-                                            ref=${c => (this.filesRef = c)}
-                                            disabled=${isLoading}
+                                            onChange={this.handleFilesSelection}
+                                            ref={c => (this.filesRef = c)}
+                                            disabled={isLoading}
                                             accept="image/*"
                                         />
-                                    <//>
-                                    <div
-                                        className="status"
-                                        data-testid="uploader-status"
-                                    >
-                                        ${this.getFilesStatus()}
-                                    <//>
-                                <//>
-                                <${UploadStep} step="3" action="מעלים">
-                                    <div className="submit-wrapper">
+                                    </UploaderWrapper>
+                                    <StatusContainer>
+                                        {this.getFilesStatus()}
+                                    </StatusContainer>
+                                </UploadStep>
+                                <UploadStep step="3" action="מעלים">
+                                    <SubmitWrapper>
                                         <button
-                                            className="button"
-                                            disabled=${!this.isValid() ||
-                                                isLoading}
-                                            onClick=${this.handleSubmit}
+                                            disabled={
+                                                !this.isValid() || isLoading
+                                            }
+                                            onClick={this.handleSubmit}
                                             data-testid="submit-button"
+                                            css={[
+                                                ButtonCss,
+                                                !this.isValid() || isLoading
+                                                    ? DisabledButtonCss
+                                                    : null,
+                                            ]}
                                         >
-                                            <span
-                                                className="${isLoading
-                                                    ? 'spinner'
-                                                    : null}"
-                                                >${isLoading
-                                                    ? null
-                                                    : 'העלאה'}<//
-                                            >
-                                        <//>
-                                    <//>
-                                    <div className="status">
-                                        ${this.getSubmissionStatus()}
-                                    <//>
-                                <//>
-                            <//>
-                        `}
-                <//>
-                <${CSSTransition}
-                    in=${successVisible}
-                    timeout=${{ enter: 500, exit: 300 }}
-                    classNames="fade-in-out"
-                    unmountOnExit
-                    onExited=${() => this.setState({ formVisible: true })}
-                >
-                    ${() => html`
-                        <div className="main">
-                            <div className="checkmark-wrapper">
-                                <${CheckMark} />
-                            <//>
-                            <div className="success-message">
-                                הקבצים נשלחו בהצלחה
-                            <//>
-                            <div className="restart-wrapper">
-                                <button
-                                    className="button"
-                                    onClick=${() =>
-                                        this.setState({
-                                            successVisible: false,
-                                        })}
-                                >
-                                    להתחיל מחדש
-                                <//>
-                            <//>
-                        <//>
-                    `}
-                <//>
-            <//>
-        `;
+                                            {isLoading ? <Spinner /> : 'העלאה'}
+                                        </button>
+                                    </SubmitWrapper>
+                                    <StatusContainer>
+                                        {this.getSubmissionStatus()}
+                                    </StatusContainer>
+                                </UploadStep>
+                            </Wrapper>
+                        )}
+                    </CSSTransition>
+                    <CSSTransition
+                        in={successVisible}
+                        timeout={{ enter: 500, exit: 300 }}
+                        classNames="fade-in-out"
+                        unmountOnExit
+                        onExited={() => this.setState({ formVisible: true })}
+                    >
+                        {() => (
+                            <Wrapper>
+                                <div>
+                                    <CheckMark />
+                                </div>
+                                <SuccessMessage>
+                                    הקבצים נשלחו בהצלחה
+                                </SuccessMessage>
+                                <div>
+                                    <button
+                                        css={ButtonCss}
+                                        onClick={() =>
+                                            this.setState({
+                                                successVisible: false,
+                                            })
+                                        }
+                                    >
+                                        להתחיל מחדש
+                                    </button>
+                                </div>
+                            </Wrapper>
+                        )}
+                    </CSSTransition>
+                </Form>
+            </>
+        );
     }
 }
+
+const Form = styled.div`
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const Wrapper = styled.div`
+    margin: 0;
+    padding: 0;
+    height: 30em;
+    width: 20em;
+    display: flex;
+    flex-direction: column;
+`;
+
+const TextInput = styled.input`
+    opacity: 1;
+    border: none;
+    border-radius: 0.5em;
+    padding: 0.7em 1em;
+    width: 100%;
+    font-size: 1.3em;
+    border: 1px solid #a2a2a2;
+    transition: opacity 200ms;
+
+    &:disabled {
+        opacity: 0.7;
+    }
+`;
+
+const UploaderWrapper = styled.label`
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    display: block;
+`;
+
+const SubmitWrapper = styled.div`
+    width: 100%;
+`;
+
+const ButtonCss = css`
+    color: rgb(231, 231, 231);
+    background-color: var(--main-color);
+    font-size: 1.3em;
+    padding: 0.7em 0;
+    border-radius: 0.5em;
+    border: 0;
+    transition: all 200ms;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    border: 1px solid var(--main-color);
+    opacity: 1;
+    transition: opacity 200ms;
+
+    &:hover {
+        background-color: var(--secondary-color);
+    }
+
+    &:active {
+        background-color: var(--secondary-color-light);
+        color: #333;
+    }
+`;
+
+const DisabledButtonCss = css`
+    cursor: default;
+    opacity: 0.7;
+
+    &:hover {
+        background-color: var(--main-color);
+    }
+
+    &:active {
+        background-color: var(--main-color);
+        color: #333;
+    }
+`;
+
+const UploaderInputCss = disabled => css`
+    /* hiding original input */
+    display: block;
+    font-size: 999px;
+    filter: alpha(opacity=0);
+    min-height: 100%;
+    min-width: 100%;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    text-align: right;
+    top: 0;
+
+    /* style */
+    cursor: ${disabled ? 'default' : 'pointer'};
+`;
+
+const StatusContainer = styled.div`
+    height: 2em;
+    margin-top: 0.5em;
+`;
+
+const StatusRow = styled.div`
+    display: flex;
+    align-items: center;
+
+    & > * {
+        margin-left: 0.5em;
+    }
+`;
+
+const SuccessMessage = styled.div`
+    font-size: 2em;
+    color: var(--main-color);
+    margin-bottom: 1em;
+    text-align: center;
+`;
+
+const spin = keyframes`
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+`;
+
+const Spinner = styled.span`
+    display: inline-block;
+    width: 0.86em;
+    height: 0.86em;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: rgb(231, 231, 231);
+    animation: spin 0.6s linear infinite;
+    -webkit-animation: ${spin} 0.6s linear infinite;
+`;
+
+const smallIconCss = css`
+    width: 2em;
+    height: 2em;
+`;
+
+const globalStyles = css`
+    :root {
+        --main-color: #4d4e4d;
+        --secondary-color: #a73a3a;
+        --secondary-color-light: #e04e4e;
+        --error-color: #d80000;
+        --success-color: #4c9a4c;
+    }
+
+    body {
+        font: 1em Arial;
+        background-image: linear-gradient(to bottom right, #a1a1a1, #cfcfcf);
+        direction: rtl;
+        color: var(--main-color);
+    }
+
+    ::placeholder,
+    :-ms-input-placeholder,
+    ::-ms-input-placeholder {
+        text-align: center;
+    }
+
+    .fade-in-out-enter {
+        opacity: 0.01;
+    }
+
+    .fade-in-out-enter-active {
+        opacity: 1;
+        transition: opacity 500ms;
+    }
+
+    .fade-in-out-leave {
+        opacity: 1;
+    }
+
+    .fade-in-out-leave-active {
+        opacity: 0.01;
+        transition: opacity 300ms;
+    }
+`;
 
 export default UploadForm;

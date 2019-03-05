@@ -1,13 +1,20 @@
 const config = api => {
-    api.cache(true);
+    api.cache(() => process.env.NODE_ENV === 'production');
 
     return {
-        env: {
-            test: {
-                presets: ['@babel/preset-env'],
-                plugins: ['@babel/plugin-transform-react-jsx'],
-            },
-        },
+        presets: [
+            '@babel/preset-env',
+            [
+                '@emotion/babel-preset-css-prop',
+                {
+                    sourceMap: true,
+                    autoLabel: process.env.NODE_ENV !== 'production',
+                    labelFormat: '[local]',
+                    cssPropOptimization: true,
+                },
+            ],
+        ],
+        plugins: [],
     };
 };
 
