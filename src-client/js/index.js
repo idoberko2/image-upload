@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 
 // components
-import UploadForm from './components/UploadForm';
+import App from './components/App';
 
-ReactDOM.render(<UploadForm />, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));
 
 // for webpack's hot module replacement
 if (module.hot) {

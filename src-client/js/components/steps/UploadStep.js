@@ -5,10 +5,11 @@ import React from 'react';
 import StepHeader from './StepHeader';
 import styled from '@emotion/styled';
 
-const UploadStep = ({ step, action, children }) => (
+const UploadStep = ({ step, action, children, status }) => (
     <Wrapper>
         <StepHeader step={step} action={action} />
         {children}
+        <StatusContainer>{status}</StatusContainer>
     </Wrapper>
 );
 
@@ -25,6 +26,11 @@ const Wrapper = styled.div`
     &:last-of-type {
         border-bottom: 0;
     }
+`;
+
+const StatusContainer = styled.div`
+    height: 2em;
+    margin-top: 0.5em;
 `;
 
 export default UploadStep;
