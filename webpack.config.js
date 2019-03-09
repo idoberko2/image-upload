@@ -21,15 +21,11 @@ const config = {
     module: {
         rules: [
             {
-                test: /\.(css)$/,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            name: '[path][name].[ext]',
-                        },
-                    },
-                ],
+                test: /\.js$/,
+                exclude: /(node_modules)/,
+                use: {
+                    loader: 'babel-loader',
+                },
             },
         ],
     },

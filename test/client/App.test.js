@@ -1,14 +1,19 @@
 import React from 'react';
 import { render, mount } from 'enzyme';
-import UploadForm from '../../src-client/js/components/UploadForm';
+import App from '../../src-client/js/components/App';
 
-describe('UploadForm', () => {
+const findCollectionInput = wrapper =>
+    wrapper.findWhere(
+        n => n.name() === 'TextInput' && n.prop('id') === 'collection'
+    );
+
+describe('App', () => {
     test('matches snapshot', () => {
-        expect(render(<UploadForm />)).toMatchSnapshot();
+        expect(render(<App />)).toMatchSnapshot();
     });
 
     test('does not allow to submit in initial state', () => {
-        const wrapper = mount(<UploadForm />);
+        const wrapper = mount(<App />);
         const submitButton = wrapper.find(
             'button[data-testid="submit-button"]'
         );
@@ -18,11 +23,11 @@ describe('UploadForm', () => {
     });
 
     test('shows error indication when collection name is deleted', () => {
-        const wrapper = mount(<UploadForm />);
-        const collectionInput = wrapper.find('#collection');
+        const wrapper = mount(<App />);
+        const collectionInput = findCollectionInput(wrapper);
 
-        expect(wrapper.find('[data-testid="collection-status"]').text()).toBe(
-            ''
+        expect(wrapper.find('[data-testid="collection-status"]')).toHaveLength(
+            0
         );
 
         collectionInput.simulate('change', {
@@ -36,10 +41,10 @@ describe('UploadForm', () => {
     });
 
     test('handles single file selection correctly', () => {
-        const wrapper = mount(<UploadForm />);
-        const uploaderInput = wrapper.find('#uploader');
+        const wrapper = mount(<App />);
+        const uploaderInput = wrapper.find('input#uploader');
 
-        expect(wrapper.find('[data-testid="uploader-status"]').text()).toBe('');
+        expect(wrapper.find('[data-testid="uploader-status"]')).toHaveLength(0);
 
         uploaderInput.simulate('change', {
             target: {
@@ -55,10 +60,10 @@ describe('UploadForm', () => {
     });
 
     test('handles multipe file selection correctly', () => {
-        const wrapper = mount(<UploadForm />);
-        const uploaderInput = wrapper.find('#uploader');
+        const wrapper = mount(<App />);
+        const uploaderInput = wrapper.find('input#uploader');
 
-        expect(wrapper.find('[data-testid="uploader-status"]').text()).toBe('');
+        expect(wrapper.find('[data-testid="uploader-status"]')).toHaveLength(0);
 
         uploaderInput.simulate('change', {
             target: {
@@ -79,10 +84,10 @@ describe('UploadForm', () => {
     });
 
     test('handles file selection cancellation correctly', () => {
-        const wrapper = mount(<UploadForm />);
-        const uploaderInput = wrapper.find('#uploader');
+        const wrapper = mount(<App />);
+        const uploaderInput = wrapper.find('input#uploader');
 
-        expect(wrapper.find('[data-testid="uploader-status"]').text()).toBe('');
+        expect(wrapper.find('[data-testid="uploader-status"]')).toHaveLength(0);
 
         uploaderInput.simulate('change', {
             target: {
@@ -101,10 +106,10 @@ describe('UploadForm', () => {
     });
 
     test('handles file types correctly', () => {
-        const wrapper = mount(<UploadForm />);
-        const uploaderInput = wrapper.find('#uploader');
+        const wrapper = mount(<App />);
+        const uploaderInput = wrapper.find('input#uploader');
 
-        expect(wrapper.find('[data-testid="uploader-status"]').text()).toBe('');
+        expect(wrapper.find('[data-testid="uploader-status"]')).toHaveLength(0);
 
         uploaderInput.simulate('change', {
             target: {
@@ -134,9 +139,9 @@ describe('UploadForm', () => {
     });
 
     test('enables and disables the submission button correctly', () => {
-        const wrapper = mount(<UploadForm />);
-        const uploaderInput = wrapper.find('#uploader');
-        const collectionInput = wrapper.find('#collection');
+        const wrapper = mount(<App />);
+        const uploaderInput = wrapper.find('input#uploader');
+        const collectionInput = findCollectionInput(wrapper);
 
         const initializeValidForm = () => {
             collectionInput.simulate('change', {

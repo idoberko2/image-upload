@@ -1,10 +1,15 @@
 // utils
-import html from '../../utils/html';
+import React from 'react';
+import { css } from '@emotion/core';
 
-const Icon = ({ path, className }) => html`
-    <svg className="${`icon ${className}`}" viewBox="0 0 512 512">
-        <path d=${path}><//>
-    <//>
+const Icon = ({ path, ...props }) => (
+    <svg css={iconCss} viewBox="0 0 512 512" {...props}>
+        <path d={path} />
+    </svg>
+);
+
+const iconCss = css`
+    fill: var(--main-color);
 `;
 
 export default Icon;
