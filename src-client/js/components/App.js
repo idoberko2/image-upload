@@ -15,13 +15,14 @@ import Success from './pages/Success';
 import Form from './pages/Form';
 
 const uploadFormInitialState = {
-    files: null,
     collection: '',
     collectionChanged: false,
+    files: null,
     formVisible: true,
+    isLoading: false,
+    photographer: '',
     successVisible: false,
     submitError: null,
-    isLoading: false,
 };
 
 class App extends React.Component {
@@ -32,6 +33,9 @@ class App extends React.Component {
         this.state = uploadFormInitialState;
 
         this.handleCollectionChange = this.handleCollectionChange.bind(this);
+        this.handlePhotographerChange = this.handlePhotographerChange.bind(
+            this
+        );
         this.handleFilesSelection = this.handleFilesSelection.bind(this);
         this.isCollectionValid = this.isCollectionValid.bind(this);
         this.isFilesValid = this.isFilesValid.bind(this);
@@ -46,6 +50,11 @@ class App extends React.Component {
             collectionChanged:
                 prevState.collectionChanged || Boolean(collection),
         }));
+    }
+
+    handlePhotographerChange(event) {
+        const photographer = event.target.value;
+        this.setState({ photographer });
     }
 
     handleFilesSelection(event) {
@@ -100,9 +109,10 @@ class App extends React.Component {
             collection,
             files,
             formVisible,
+            isLoading,
+            photographer,
             successVisible,
             submitError,
-            isLoading,
         } = this.state;
 
         return (
@@ -127,8 +137,12 @@ class App extends React.Component {
                                 isSubmitDisabled={!this.isValid() || isLoading}
                                 isLoading={isLoading}
                                 onCollectionChange={this.handleCollectionChange}
+                                onPhotographerChange={
+                                    this.handlePhotographerChange
+                                }
                                 onFilesChange={this.handleFilesSelection}
                                 onSubmit={this.handleSubmit}
+                                photographer={photographer}
                             />
                         )}
                     </CSSTransition>

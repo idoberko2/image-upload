@@ -1,4 +1,5 @@
 import React from 'react';
+import { css } from '@emotion/core';
 
 import UploadStep from './UploadStep';
 import StatusRow from './StatusRow';
@@ -16,10 +17,17 @@ const getCollectionStatus = isCollectionValid =>
         </StatusRow>
     );
 
-const FirstStep = ({ isDisabled, collection, isCollectionValid, onChange }) => (
+const FirstStep = ({
+    isDisabled,
+    collection,
+    photographer,
+    isCollectionValid,
+    onCollectionChange,
+    onPhotographerChange,
+}) => (
     <UploadStep
         step="1"
-        action="בוחרים שם לאלבום"
+        action="ממלאים פרטים"
         status={getCollectionStatus(isCollectionValid)}
     >
         <TextInput
@@ -27,8 +35,19 @@ const FirstStep = ({ isDisabled, collection, isCollectionValid, onChange }) => (
             id="collection"
             placeholder="שם האלבום"
             value={collection}
-            onChange={onChange}
+            onChange={onCollectionChange}
             disabled={isDisabled}
+        />
+        <TextInput
+            type="text"
+            id="photographer"
+            placeholder="שם הצלם"
+            value={photographer}
+            onChange={onPhotographerChange}
+            disabled={isDisabled}
+            css={css`
+                margin-top: 0.5em;
+            `}
         />
     </UploadStep>
 );

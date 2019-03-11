@@ -1,9 +1,10 @@
 // external
 import axios from 'axios';
 
-function sendFiles({ collection, files }) {
+function sendFiles({ collection, files, photographer }) {
     const formData = new FormData();
     formData.append('collection', collection.trim());
+    formData.append('photographer', photographer.trim());
 
     Array.from(files).forEach(file => {
         formData.append('images', file);

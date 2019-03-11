@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`App matches snapshot 1`] = `
-.emotion-34 {
+.emotion-36 {
   width: 100%;
   height: 100%;
   display: -webkit-box;
@@ -18,10 +18,9 @@ exports[`App matches snapshot 1`] = `
   justify-content: center;
 }
 
-.emotion-32 {
+.emotion-34 {
   margin: 0;
   padding: 0;
-  height: 30em;
   width: 20em;
   display: -webkit-box;
   display: -webkit-flex;
@@ -32,18 +31,18 @@ exports[`App matches snapshot 1`] = `
   flex-direction: column;
 }
 
-.emotion-8 {
+.emotion-10 {
   margin: 0;
   padding: 0;
   padding-top: 2em;
   border-bottom: 1px solid #adadad;
 }
 
-.emotion-8:first-of-type {
+.emotion-10:first-of-type {
   padding-top: 0;
 }
 
-.emotion-8:last-of-type {
+.emotion-10:last-of-type {
   border-bottom: 0;
 }
 
@@ -76,11 +75,28 @@ exports[`App matches snapshot 1`] = `
 }
 
 .emotion-6 {
+  opacity: 1;
+  border: none;
+  border-radius: 0.5em;
+  padding: 0.7em 1em;
+  width: 100%;
+  font-size: 1.3em;
+  border: 1px solid #a2a2a2;
+  -webkit-transition: opacity 200ms;
+  transition: opacity 200ms;
+  margin-top: 0.5em;
+}
+
+.emotion-6:disabled {
+  opacity: 0.7;
+}
+
+.emotion-8 {
   height: 2em;
   margin-top: 0.5em;
 }
 
-.emotion-15 {
+.emotion-17 {
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -102,16 +118,16 @@ exports[`App matches snapshot 1`] = `
   transition: opacity 200ms;
 }
 
-.emotion-15:hover {
+.emotion-17:hover {
   background-color: var(--secondary-color);
 }
 
-.emotion-15:active {
+.emotion-17:active {
   background-color: var(--secondary-color-light);
   color: #333;
 }
 
-.emotion-14 {
+.emotion-16 {
   display: block;
   font-size: 999px;
   -webkit-filter: alpha(opacity=0);
@@ -126,11 +142,11 @@ exports[`App matches snapshot 1`] = `
   cursor: pointer;
 }
 
-.emotion-26 {
+.emotion-28 {
   width: 100%;
 }
 
-.emotion-25 {
+.emotion-27 {
   color: rgb(231,231,231);
   background-color: var(--main-color);
   font-size: 1.3em;
@@ -150,32 +166,32 @@ exports[`App matches snapshot 1`] = `
   opacity: 0.7;
 }
 
-.emotion-25:hover {
+.emotion-27:hover {
   background-color: var(--secondary-color);
 }
 
-.emotion-25:active {
+.emotion-27:active {
   background-color: var(--secondary-color-light);
   color: #333;
 }
 
-.emotion-25:hover {
+.emotion-27:hover {
   background-color: var(--main-color);
 }
 
-.emotion-25:active {
+.emotion-27:active {
   background-color: var(--main-color);
   color: #333;
 }
 
 <div
-  class="emotion-34 emotion-35"
+  class="emotion-36 emotion-37"
 >
   <div
-    class="emotion-32 emotion-33"
+    class="emotion-34 emotion-35"
   >
     <div
-      class="emotion-8 emotion-9"
+      class="emotion-10 emotion-11"
     >
       <h1
         class="emotion-2 emotion-3"
@@ -184,7 +200,7 @@ exports[`App matches snapshot 1`] = `
         <span
           class="emotion-0 emotion-1"
         >
-          בוחרים שם לאלבום
+          ממלאים פרטים
         </span>
       </h1>
       <input
@@ -194,12 +210,19 @@ exports[`App matches snapshot 1`] = `
         type="text"
         value=""
       />
+      <input
+        class="emotion-6 emotion-5"
+        id="photographer"
+        placeholder="שם הצלם"
+        type="text"
+        value=""
+      />
       <div
-        class="emotion-6 emotion-7"
+        class="emotion-8 emotion-9"
       />
     </div>
     <div
-      class="emotion-8 emotion-9"
+      class="emotion-10 emotion-11"
     >
       <h1
         class="emotion-2 emotion-3"
@@ -212,24 +235,24 @@ exports[`App matches snapshot 1`] = `
         </span>
       </h1>
       <label
-        class="emotion-15 emotion-16"
+        class="emotion-17 emotion-18"
         for="uploader"
       >
         בחירת תמונות
         <input
           accept="image/*"
-          class="emotion-14"
+          class="emotion-16"
           id="uploader"
           multiple=""
           type="file"
         />
       </label>
       <div
-        class="emotion-6 emotion-7"
+        class="emotion-8 emotion-9"
       />
     </div>
     <div
-      class="emotion-8 emotion-9"
+      class="emotion-10 emotion-11"
     >
       <h1
         class="emotion-2 emotion-3"
@@ -242,10 +265,10 @@ exports[`App matches snapshot 1`] = `
         </span>
       </h1>
       <div
-        class="emotion-26 emotion-27"
+        class="emotion-28 emotion-29"
       >
         <button
-          class="emotion-25"
+          class="emotion-27"
           data-testid="submit-button"
           disabled=""
         >
@@ -253,7 +276,7 @@ exports[`App matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="emotion-6 emotion-7"
+        class="emotion-8 emotion-9"
       />
     </div>
   </div>

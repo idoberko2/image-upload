@@ -14,6 +14,8 @@ const Form = ({
     isFilesValid,
     onFilesChange,
     filesRef,
+    photographer,
+    onPhotographerChange,
     isSubmitDisabled,
     onSubmit,
     submitError,
@@ -23,7 +25,9 @@ const Form = ({
             collection={collection}
             isCollectionValid={isCollectionValid}
             isDisabled={isLoading}
-            onChange={onCollectionChange}
+            onCollectionChange={onCollectionChange}
+            photographer={photographer}
+            onPhotographerChange={onPhotographerChange}
         />
         <SecondStep
             files={files}
