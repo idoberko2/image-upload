@@ -15,7 +15,8 @@ function processImage(image) {
         .overlayWith(logo, {
             gravity: sharp.gravity.northwest,
         })
-        .resize(resizeWidthTo, resizeHeightTo);
+        .resize(resizeWidthTo, resizeHeightTo)
+        .toBuffer();
 }
 
 module.exports = processImage;

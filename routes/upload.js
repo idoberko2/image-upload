@@ -25,27 +25,30 @@ const removeTempFile = path =>
         });
     });
 
-router.post('/', upload.array('images'), async (req, res) => {
-    const promises = req.files.map(async file => {
-        const { path, originalname } = file;
-        const { collection } = req.body;
-        const processedImage = processImage(path);
-        const storagePath = await storageFunction(
-            processedImage,
-            collection,
-            originalname,
-            `${req.protocol}://${req.get('host')}/${localStoragePublicPath}`
-        );
+router.post('/', upload.array('images'), async (req, res, next) => {
+    try {
+        const promises = req.files.map(async file => {
+            const { path, originalname } = file;
+            const { collection } = req.body;
+            const storagePath = await storageFunction(
+                await processImage(path),
+                collection,
+                originalname,
+                `${req.protocol}://${req.get('host')}/${localStoragePublicPath}`
+            );
 
-        await removeTempFile(path);
+            await removeTempFile(path);
 
-        return storagePath;
-    });
+            return storagePath;
+        });
 
-    const urls = await Promise.all(promises);
-    console.info({ urls });
+        const urls = await Promise.all(promises);
+        console.info({ urls });
 
-    return res.json({ urls });
+        return res.json({ urls });
+    } catch (error) {
+        next(error);
+    }
 });
 
 module.exports = router;

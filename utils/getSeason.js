@@ -1,7 +1,7 @@
 function calculateSeason(date) {
     const year = date.getFullYear();
 
-    if (date < new Date(`${date.getFullYear()}-07-10`)) {
+    if (date < new Date(`${year}-06-10`)) {
         return `${year - 1}-${year}`;
     }
 

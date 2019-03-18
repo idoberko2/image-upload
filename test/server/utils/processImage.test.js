@@ -11,6 +11,7 @@ const mockSharpHandlers = {};
 
 mockSharpHandlers.overlayWith = jest.fn(() => mockSharpHandlers);
 mockSharpHandlers.resize = jest.fn(() => mockSharpHandlers);
+mockSharpHandlers.toBuffer = jest.fn(() => mockSharpHandlers);
 
 function mockSharp() {
     return mockSharpHandlers;

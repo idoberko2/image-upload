@@ -2,7 +2,8 @@ const getSeason = require('../../../utils/getSeason');
 
 describe('getSeason', () => {
     test('should return correct season for beginning of the season', () => {
-        const date = new Date('2015-08-20');
+        // first training
+        const date = new Date('2015-06-20');
         const season = getSeason(date);
 
         expect(season).toEqual('2015-2016');
