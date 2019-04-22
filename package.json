@@ -6,7 +6,8 @@
         "start": "webpack --env.NODE_ENV=production && cross-env NODE_ENV=production ./bin/www",
         "start:dev": "cross-env NODE_ENV=development nodemon ./bin/www",
         "build": "webpack --env.NODE_ENV=production",
-        "test": "jest"
+        "test": "jest",
+        "test:coverage": "jest --collectCoverage"
     },
     "nodemonConfig": {
         "ignore": [
@@ -43,6 +44,7 @@
         "webpack": "^4.29.3"
     },
     "devDependencies": {
+        "axios-mock-adapter": "^1.16.0",
         "babel-jest": "^24.1.0",
         "babel-polyfill": "^6.26.0",
         "enzyme": "^3.9.0",

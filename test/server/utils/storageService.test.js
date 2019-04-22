@@ -54,4 +54,32 @@ describe('storageService', () => {
         expect(storageService.isLocal).toBeFalsy();
         expect(storageService.isMediaPlatform).toBeTruthy();
     });
+
+    test('should call WMP sdk correctly', async () => {
+        function mockMediaPlatformSDK() {
+            return null;
+        }
+        mockMediaPlatformSDK.MediaPlatform = () => {};
+
+        jest.mock('media-platform-js-sdk', () => mockMediaPlatformSDK);
+
+        const uploaderFn = jest.fn();
+        const generateStorageFunction = require('../../../utils/storeMediaPlatform');
+        const storeMediaPlatform = generateStorageFunction(
+            'WMP_DOMAIN',
+            'WMP_PUBLIC_URL',
+            'WMP_APPID',
+            'WMP_SHARED_SECRET',
+            uploaderFn
+        );
+
+        const image = new File(['test'], 'testFile.png');
+        const result = await storeMediaPlatform(
+            image,
+            'collection',
+            'filename.png'
+        );
+        expect(uploaderFn).toBeCalledWith('/collection/filename.png', image);
+        expect(result).toBe('WMP_PUBLIC_URL/collection/filename.png');
+    });
 });

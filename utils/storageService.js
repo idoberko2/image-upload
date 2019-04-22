@@ -10,8 +10,7 @@ const {
 
 const isMediaPlatform =
     WMP_APPID && WMP_DOMAIN && WMP_PUBLIC_URL && WMP_SHARED_SECRET;
-const isLocal = !isMediaPlatform;
-const localStoragePublicPath = isLocal ? 'uploadedFiles' : null;
+const localStoragePublicPath = !isMediaPlatform ? 'uploadedFiles' : null;
 
 function selectStorageFunction() {
     if (isMediaPlatform) {
@@ -24,17 +23,13 @@ function selectStorageFunction() {
         );
     }
 
-    if (isLocal) {
-        console.info('Using local storage as the storage service');
-        return storeLocally;
-    }
-
-    throw new Error('unknown storage service');
+    console.info('Using local storage as the storage service');
+    return storeLocally;
 }
 
 module.exports = {
     storageFunction: selectStorageFunction(),
     isMediaPlatform,
-    isLocal,
+    isLocal: !isMediaPlatform,
     localStoragePublicPath,
 };

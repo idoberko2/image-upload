@@ -1,10 +1,19 @@
 import React from 'react';
 import { render, mount } from 'enzyme';
 import App from '../../src-client/js/components/App';
+import axios from '../../src-client/js/utils/axios';
+import MockAdapter from 'axios-mock-adapter';
+import { doesNotReject } from 'assert';
+const axiosMock = new MockAdapter(axios);
 
 const findCollectionInput = wrapper =>
     wrapper.findWhere(
         n => n.name() === 'TextInput' && n.prop('id') === 'collection'
+    );
+
+const findPhotographerInput = wrapper =>
+    wrapper.findWhere(
+        n => n.name() === 'TextInput' && n.prop('id') === 'photographer'
     );
 
 describe('App', () => {
@@ -198,5 +207,46 @@ describe('App', () => {
         expect(
             wrapper.find('button[data-testid="submit-button"]').prop('disabled')
         ).toBe(false);
+    });
+});
+
+test('submits correctly', done => {
+    const wrapper = mount(<App />);
+    const collectionInput = findCollectionInput(wrapper);
+    const photographerInput = findPhotographerInput(wrapper);
+    const uploaderInput = wrapper.find('input#uploader');
+    const uploadTestFile = new File(['test1'], 'test1.jpg', {
+        type: 'image/jpeg',
+    });
+
+    collectionInput.simulate('change', {
+        target: { value: '  collection name         ' },
+    });
+    photographerInput.simulate('change', {
+        target: { value: ' photographer name ' },
+    });
+    uploaderInput.simulate('change', {
+        target: {
+            files: [uploadTestFile],
+        },
+    });
+
+    axiosMock.onPost().replyOnce(200);
+
+    const submitButton = wrapper.find('button[data-testid="submit-button"]');
+    expect(submitButton.prop('disabled')).toBe(false);
+    submitButton.simulate('click');
+
+    setImmediate(() => {
+        expect(axiosMock.history.post.length).toBe(1);
+
+        const actualBody = {};
+        axiosMock.history.post[0].data.forEach((value, key) => {
+            actualBody[key] = value;
+        });
+        expect(actualBody.collection).toBe('collection name');
+        expect(actualBody.photographer).toBe('photographer name');
+        expect(actualBody.images).toBe(uploadTestFile);
+        done();
     });
 });
