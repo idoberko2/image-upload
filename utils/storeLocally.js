@@ -28,7 +28,7 @@ function createBaseFolderIfNotExists(path) {
     return folderCreationPromises[path];
 }
 
-async function storeLocally(image, collection, fileName, prefix = '') {
+async function storeLocally(image, collection, fileName, { prefix = '' }) {
     const uploadsPath = path.join(__dirname, '..', uploadsFolder);
     const collectionFolder = path.join(uploadsPath, collection);
     const storageFileName = `${Math.random()}_${fileName}`;

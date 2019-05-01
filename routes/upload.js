@@ -28,13 +28,18 @@ const removeTempFile = path =>
 router.post('/', upload.array('images'), async (req, res, next) => {
     try {
         const promises = req.files.map(async file => {
-            const { path, originalname } = file;
+            const { mimetype, originalname, path } = file;
             const { collection } = req.body;
             const storagePath = await storageFunction(
                 await processImage(path),
                 collection,
                 originalname,
-                `${req.protocol}://${req.get('host')}/${localStoragePublicPath}`
+                {
+                    prefix: `${req.protocol}://${req.get(
+                        'host'
+                    )}/${localStoragePublicPath}`,
+                    mimetype,
+                }
             );
 
             await removeTempFile(path);

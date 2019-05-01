@@ -1,85 +1,67 @@
 describe('storageService', () => {
     beforeEach(jest.resetModules);
 
-    test('should store locally when WMP_DOMAIN is unset', () => {
-        const { WMP_DOMAIN, ...newEnv } = process.env;
+    test('should store locally when S3_ACCESS_KEY is unset', () => {
+        const { S3_ACCESS_KEY, ...newEnv } = process.env;
         process.env = {
             ...newEnv,
         };
         const storageService = require('../../../utils/storageService');
         expect(storageService.isLocal).toBeTruthy();
-        expect(storageService.isMediaPlatform).toBeFalsy();
+        expect(storageService.isExternal).toBeFalsy();
     });
 
-    test('should store locally when WMP_PUBLIC_URL is unset', () => {
-        const { WMP_PUBLIC_URL, ...newEnv } = process.env;
+    test('should store locally when S3_SECRET_KEY is unset', () => {
+        const { S3_SECRET_KEY, ...newEnv } = process.env;
         process.env = {
             ...newEnv,
         };
         const storageService = require('../../../utils/storageService');
         expect(storageService.isLocal).toBeTruthy();
-        expect(storageService.isMediaPlatform).toBeFalsy();
+        expect(storageService.isExternal).toBeFalsy();
     });
 
-    test('should store locally when WMP_APPID is unset', () => {
-        const { WMP_APPID, ...newEnv } = process.env;
+    test('should store locally when S3_UPLOADS_BUCKET is unset', () => {
+        const { S3_UPLOADS_BUCKET, ...newEnv } = process.env;
         process.env = {
             ...newEnv,
         };
         const storageService = require('../../../utils/storageService');
         expect(storageService.isLocal).toBeTruthy();
-        expect(storageService.isMediaPlatform).toBeFalsy();
+        expect(storageService.isExternal).toBeFalsy();
     });
 
-    test('should store locally when WMP_SHARED_SECRET is unset', () => {
-        const { WMP_SHARED_SECRET, ...newEnv } = process.env;
-        process.env = {
-            ...newEnv,
-        };
-        const storageService = require('../../../utils/storageService');
-        expect(storageService.isLocal).toBeTruthy();
-        expect(storageService.isMediaPlatform).toBeFalsy();
-    });
-
-    test('should use WMP when the configuration is set', () => {
+    test('should use external storage when the configuration is set', () => {
         process.env = {
             ...process.env,
-            WMP_DOMAIN: 'test_domain',
-            WMP_PUBLIC_URL: 'test_public_url',
-            WMP_APPID: 'test_appid',
-            WMP_SHARED_SECRET: 'test_secret',
+            S3_ACCESS_KEY: 'test_key',
+            S3_UPLOADS_BUCKET: 'test_bucket',
+            S3_ACCESS_SECRET: 'test_secret',
         };
 
         const storageService = require('../../../utils/storageService');
         expect(storageService.isLocal).toBeFalsy();
-        expect(storageService.isMediaPlatform).toBeTruthy();
+        expect(storageService.isExternal).toBeTruthy();
     });
 
-    test('should call WMP sdk correctly', async () => {
-        function mockMediaPlatformSDK() {
-            return null;
-        }
-        mockMediaPlatformSDK.MediaPlatform = () => {};
-
-        jest.mock('media-platform-js-sdk', () => mockMediaPlatformSDK);
-
+    test('should call S3 sdk correctly', async () => {
         const uploaderFn = jest.fn();
-        const generateStorageFunction = require('../../../utils/storeMediaPlatform');
-        const storeMediaPlatform = generateStorageFunction(
-            'WMP_DOMAIN',
-            'WMP_PUBLIC_URL',
-            'WMP_APPID',
-            'WMP_SHARED_SECRET',
+        const generateStorageFunction = require('../../../utils/storeExternally');
+        const storeExternally = generateStorageFunction(
+            'S3_ACCESS_KEY',
+            'S3_ACCESS_SECRET',
+            'S3_UPLOADS_BUCKET',
             uploaderFn
         );
 
         const image = new File(['test'], 'testFile.png');
-        const result = await storeMediaPlatform(
+        const result = await storeExternally(
             image,
             'collection',
-            'filename.png'
+            'filename.png',
+            { mimetype: 'image/png' }
         );
         expect(uploaderFn).toBeCalledWith('/collection/filename.png', image);
-        expect(result).toBe('WMP_PUBLIC_URL/collection/filename.png');
+        expect(result).toBe('S3_UPLOADS_BUCKET/collection/filename.png');
     });
 });

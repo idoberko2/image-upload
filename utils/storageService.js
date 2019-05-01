@@ -1,25 +1,18 @@
 const storeLocally = require('./storeLocally');
-const generateStorageFunction = require('./storeMediaPlatform');
+const generateStorageFunction = require('./storeExternally');
 
-const {
-    WMP_DOMAIN,
-    WMP_PUBLIC_URL,
-    WMP_APPID,
-    WMP_SHARED_SECRET,
-} = process.env;
+const { S3_ACCESS_KEY, S3_ACCESS_SECRET, S3_UPLOADS_BUCKET } = process.env;
 
-const isMediaPlatform =
-    WMP_APPID && WMP_DOMAIN && WMP_PUBLIC_URL && WMP_SHARED_SECRET;
-const localStoragePublicPath = !isMediaPlatform ? 'uploadedFiles' : null;
+const isExternal = S3_ACCESS_KEY && S3_ACCESS_SECRET && S3_UPLOADS_BUCKET;
+const localStoragePublicPath = !isExternal ? 'uploadedFiles' : null;
 
 function selectStorageFunction() {
-    if (isMediaPlatform) {
-        console.info('Using Wix Media Platform as the storage service');
+    if (isExternal) {
+        console.info('Using S3 as the storage service');
         return generateStorageFunction(
-            WMP_DOMAIN,
-            WMP_PUBLIC_URL,
-            WMP_APPID,
-            WMP_SHARED_SECRET
+            S3_ACCESS_KEY,
+            S3_ACCESS_SECRET,
+            S3_UPLOADS_BUCKET
         );
     }
 
@@ -29,7 +22,7 @@ function selectStorageFunction() {
 
 module.exports = {
     storageFunction: selectStorageFunction(),
-    isMediaPlatform,
-    isLocal: !isMediaPlatform,
+    isExternal,
+    isLocal: !isExternal,
     localStoragePublicPath,
 };
