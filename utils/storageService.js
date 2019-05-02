@@ -1,9 +1,15 @@
 const storeLocally = require('./storeLocally');
 const generateStorageFunction = require('./storeExternally');
 
-const { S3_ACCESS_KEY, S3_ACCESS_SECRET, S3_UPLOADS_BUCKET } = process.env;
+const {
+    S3_ACCESS_KEY,
+    S3_ACCESS_SECRET,
+    S3_UPLOADS_BUCKET,
+    S3_PUBLIC_PATH,
+} = process.env;
 
-const isExternal = S3_ACCESS_KEY && S3_ACCESS_SECRET && S3_UPLOADS_BUCKET;
+const isExternal =
+    S3_ACCESS_KEY && S3_ACCESS_SECRET && S3_UPLOADS_BUCKET && S3_PUBLIC_PATH;
 const localStoragePublicPath = !isExternal ? 'uploadedFiles' : null;
 
 function selectStorageFunction() {
@@ -12,7 +18,8 @@ function selectStorageFunction() {
         return generateStorageFunction(
             S3_ACCESS_KEY,
             S3_ACCESS_SECRET,
-            S3_UPLOADS_BUCKET
+            S3_UPLOADS_BUCKET,
+            S3_PUBLIC_PATH
         );
     }
 
