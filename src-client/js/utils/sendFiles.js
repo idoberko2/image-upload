@@ -1,4 +1,4 @@
-import axios from './axios';
+import axios from 'axios';
 
 function sendFiles({ collection, files, photographer }) {
     const formData = new FormData();

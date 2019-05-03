@@ -1,9 +1,8 @@
 import React from 'react';
 import { render, mount } from 'enzyme';
+import axios from 'axios';
 import App from '../../src-client/js/components/App';
-import axios from '../../src-client/js/utils/axios';
 import MockAdapter from 'axios-mock-adapter';
-import { doesNotReject } from 'assert';
 const axiosMock = new MockAdapter(axios);
 
 const findCollectionInput = wrapper =>
