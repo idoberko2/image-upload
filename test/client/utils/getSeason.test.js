@@ -1,4 +1,4 @@
-const getSeason = require('../../../utils/getSeason');
+const getSeason = require('../../../src-client/js/utils/getSeason');
 
 describe('getSeason', () => {
     test('should return correct season for beginning of the season', () => {

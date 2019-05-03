@@ -1,55 +1,55 @@
+// external
 import React from 'react';
-import { css } from '@emotion/core';
 
+// components
 import UploadStep from './UploadStep';
-import StatusRow from './StatusRow';
-import TextInput from '../common/TextInput';
-import ErrorMark from '../icons/ErrorMark';
-import smallIconCss from '../icons/smallIconCss';
+import LabelledInput from '../common/LabelledInput';
 
-const getCollectionStatus = isCollectionValid =>
-    isCollectionValid ? null : (
-        <StatusRow>
-            <ErrorMark css={smallIconCss} />
-            <div data-testid="collection-status">
-                שם האלבום לא יכול להיות ריק
-            </div>
-        </StatusRow>
+const FirstStep = ({ isDisabled, handleChange, values, touched, errors }) => {
+    return (
+        <UploadStep step="1" action="ממלאים פרטים">
+            <LabelledInput
+                id="collection"
+                name="collection"
+                label="שם התיקייה (אנגלית)"
+                error={touched.collection && errors.collection}
+                onChange={handleChange}
+                validate={value => (!value ? 'שדה חובה' : null)}
+                value={values.collection}
+                disabled={isDisabled}
+            />
+            <LabelledInput
+                id="galleryName"
+                name="galleryName"
+                label="שם הגלריה (עברית)"
+                error={touched.galleryName && errors.galleryName}
+                onChange={handleChange}
+                validate={value => (!value ? 'שדה חובה' : null)}
+                value={values.galleryName}
+                disabled={isDisabled}
+            />
+            <LabelledInput
+                id="season"
+                name="season"
+                label="עונה"
+                error={touched.season && errors.season}
+                onChange={handleChange}
+                validate={value => (!value ? 'ערך לא תקין' : null)}
+                value={values.season}
+                disabled={isDisabled}
+            />
+            <LabelledInput
+                id="photographer"
+                name="photographer"
+                label="שם הצלם"
+                error={touched.photographer && errors.photographer}
+                onChange={handleChange}
+                validate={value => (!value ? 'שדה חובה' : null)}
+                value={values.photographer}
+                disabled={isDisabled}
+            />
+        </UploadStep>
     );
-
-const FirstStep = ({
-    isDisabled,
-    collection,
-    photographer,
-    isCollectionValid,
-    onCollectionChange,
-    onPhotographerChange,
-}) => (
-    <UploadStep
-        step="1"
-        action="ממלאים פרטים"
-        status={getCollectionStatus(isCollectionValid)}
-    >
-        <TextInput
-            type="text"
-            id="collection"
-            placeholder="שם האלבום"
-            value={collection}
-            onChange={onCollectionChange}
-            disabled={isDisabled}
-        />
-        <TextInput
-            type="text"
-            id="photographer"
-            placeholder="שם הצלם"
-            value={photographer}
-            onChange={onPhotographerChange}
-            disabled={isDisabled}
-            css={css`
-                margin-top: 0.5em;
-            `}
-        />
-    </UploadStep>
-);
+};
 
 export default FirstStep;

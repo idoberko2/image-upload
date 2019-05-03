@@ -24,8 +24,8 @@ const ThirdStep = ({ isDisabled, isLoading, onSubmit, submitError }) => (
     >
         <SubmitWrapper>
             <button
+                type="submit"
                 disabled={isDisabled}
-                onClick={onSubmit}
                 data-testid="submit-button"
                 css={getButtonCss(isDisabled)}
             >

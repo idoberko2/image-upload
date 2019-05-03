@@ -9,12 +9,12 @@ import ErrorMark from '../icons/ErrorMark';
 import smallIconCss from '../icons/smallIconCss';
 import getButtonCss from '../common/buttonCss';
 
-const getFilesStatus = (files, isFilesValid) => {
-    if (!files) {
+const getFilesStatus = (files, filesError, isFilesTouched) => {
+    if (!isFilesTouched) {
         return null;
     }
 
-    if (isFilesValid) {
+    if (!filesError) {
         const text =
             files.length > 1 ? files.length + ' קבצים נבחרו' : 'קובץ אחד נבחר';
         return (
@@ -28,9 +28,7 @@ const getFilesStatus = (files, isFilesValid) => {
     return (
         <StatusRow>
             <ErrorMark css={smallIconCss} />
-            <div data-testid="uploader-status">
-                לפחות אחד מהקבצים אינו תמונה
-            </div>
+            <div data-testid="uploader-status">{filesError}</div>
         </StatusRow>
     );
 };
@@ -38,23 +36,25 @@ const getFilesStatus = (files, isFilesValid) => {
 const SecondStep = ({
     isDisabled,
     files,
-    isFilesValid,
+    filesError,
+    isFilesTouched,
     inputRef,
-    onChange,
+    handleChange,
 }) => (
     <UploadStep
         step="2"
         action="בוחרים תמונות"
-        status={getFilesStatus(files, isFilesValid)}
+        status={getFilesStatus(files, filesError, isFilesTouched)}
     >
         <UploaderWrapper htmlFor="uploader" css={getButtonCss(isDisabled)}>
             בחירת תמונות
             <input
                 type="file"
                 id="uploader"
+                name="files"
                 css={uploaderInputCss(isDisabled)}
                 multiple
-                onChange={onChange}
+                onChange={handleChange}
                 ref={inputRef}
                 disabled={isDisabled}
                 accept="image/*"

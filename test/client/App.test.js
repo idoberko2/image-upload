@@ -1,19 +1,18 @@
+// external
 import React from 'react';
 import { render, mount } from 'enzyme';
+
+// axios mock
 import axios from 'axios';
-import App from '../../src-client/js/components/App';
 import MockAdapter from 'axios-mock-adapter';
 const axiosMock = new MockAdapter(axios);
 
-const findCollectionInput = wrapper =>
-    wrapper.findWhere(
-        n => n.name() === 'TextInput' && n.prop('id') === 'collection'
-    );
+// components
+import App from '../../src-client/js/components/App';
+import { MyInnerForm } from '../../src-client/js/components/pages/Form';
 
-const findPhotographerInput = wrapper =>
-    wrapper.findWhere(
-        n => n.name() === 'TextInput' && n.prop('id') === 'photographer'
-    );
+const findInputById = (wrapper, id) =>
+    wrapper.findWhere(n => n.name() === 'TextInput' && n.prop('id') === id);
 
 describe('App', () => {
     test('matches snapshot', () => {
@@ -28,24 +27,6 @@ describe('App', () => {
 
         expect(submitButton.exists()).toBe(true);
         expect(submitButton.prop('disabled')).toBe(true);
-    });
-
-    test('shows error indication when collection name is deleted', () => {
-        const wrapper = mount(<App />);
-        const collectionInput = findCollectionInput(wrapper);
-
-        expect(wrapper.find('[data-testid="collection-status"]')).toHaveLength(
-            0
-        );
-
-        collectionInput.simulate('change', {
-            target: { value: 'collection name' },
-        });
-        collectionInput.simulate('change', { target: { value: '' } });
-
-        expect(
-            wrapper.find('[data-testid="collection-status"]').text()
-        ).toEqual('שם האלבום לא יכול להיות ריק');
     });
 
     test('handles single file selection correctly', () => {
@@ -113,7 +94,7 @@ describe('App', () => {
         );
     });
 
-    test('handles file types correctly', () => {
+    test('handles file types correctly', done => {
         const wrapper = mount(<App />);
         const uploaderInput = wrapper.find('input#uploader');
 
@@ -141,23 +122,32 @@ describe('App', () => {
             },
         });
 
-        expect(wrapper.find('[data-testid="uploader-status"]').text()).toEqual(
-            'לפחות אחד מהקבצים אינו תמונה'
-        );
+        setTimeout(() => {
+            expect(
+                wrapper.find('[data-testid="uploader-status"]').text()
+            ).toEqual('לפחות אחד מהקבצים אינו תמונה');
+            done();
+        });
     });
 
-    test('enables and disables the submission button correctly', () => {
-        const wrapper = mount(<App />);
-        const uploaderInput = wrapper.find('input#uploader');
-        const collectionInput = findCollectionInput(wrapper);
-
-        const initializeValidForm = () => {
-            collectionInput.simulate('change', {
-                target: { value: 'collection name' },
+    describe('enables and disables the submission button correctly', () => {
+        const initializeValidForm = wrapper => {
+            findInputById(wrapper, 'collection').simulate('change', {
+                target: { name: 'collection', value: 'collection name' },
+            });
+            findInputById(wrapper, 'galleryName').simulate('change', {
+                target: { name: 'galleryName', value: 'gallery name' },
+            });
+            findInputById(wrapper, 'season').simulate('change', {
+                target: { name: 'season', value: '2018-2019' },
+            });
+            findInputById(wrapper, 'photographer').simulate('change', {
+                target: { name: 'photographer', value: 'photographer name' },
             });
 
-            uploaderInput.simulate('change', {
+            wrapper.find('input#uploader').simulate('change', {
                 target: {
+                    name: 'files',
                     files: [
                         new File(['test1'], 'test1.jpg', {
                             type: 'image/jpeg',
@@ -167,74 +157,193 @@ describe('App', () => {
             });
         };
 
-        // test valid form
-        initializeValidForm();
-        expect(
-            wrapper.find('button[data-testid="submit-button"]').prop('disabled')
-        ).toBe(false);
+        test('initially submit is disabled', () => {
+            const wrapper = mount(<App />);
 
-        // change collection name to be invalid
-        collectionInput.simulate('change', {
-            target: { value: '' },
+            expect(
+                wrapper
+                    .find('button[data-testid="submit-button"]')
+                    .prop('disabled')
+            ).toBe(true);
         });
-        expect(
-            wrapper.find('button[data-testid="submit-button"]').prop('disabled')
-        ).toBe(true);
 
-        // retest valid form
-        initializeValidForm();
-        expect(
-            wrapper.find('button[data-testid="submit-button"]').prop('disabled')
-        ).toBe(false);
+        test('invalid collection disables submit button', done => {
+            const wrapper = mount(<App />);
+            initializeValidForm(wrapper);
 
-        // change uploader files to be invalid
-        uploaderInput.simulate('change', {
-            target: {
-                files: [
-                    new File(['test1'], 'test1.txt', {
-                        type: 'text/plain',
-                    }),
-                ],
-            },
+            expect(
+                wrapper
+                    .find('button[data-testid="submit-button"]')
+                    .prop('disabled')
+            ).toBe(false);
+
+            findInputById(wrapper, 'collection').simulate('change', {
+                target: { name: 'collection', value: '' },
+            });
+
+            setImmediate(() => {
+                wrapper.update();
+
+                expect(
+                    wrapper
+                        .find('button[data-testid="submit-button"]')
+                        .prop('disabled')
+                ).toBe(true);
+                done();
+            });
         });
-        expect(
-            wrapper.find('button[data-testid="submit-button"]').prop('disabled')
-        ).toBe(true);
 
-        // retest valid form
-        initializeValidForm();
-        expect(
-            wrapper.find('button[data-testid="submit-button"]').prop('disabled')
-        ).toBe(false);
+        test('invalid gallery name disables submit button', done => {
+            const wrapper = mount(<App />);
+            initializeValidForm(wrapper);
+
+            expect(
+                wrapper
+                    .find('button[data-testid="submit-button"]')
+                    .prop('disabled')
+            ).toBe(false);
+
+            findInputById(wrapper, 'galleryName').simulate('change', {
+                target: { name: 'galleryName', value: '' },
+            });
+
+            setImmediate(() => {
+                wrapper.update();
+
+                expect(
+                    wrapper
+                        .find('button[data-testid="submit-button"]')
+                        .prop('disabled')
+                ).toBe(true);
+                done();
+            });
+        });
+
+        test('invalid season disables submit button', done => {
+            const wrapper = mount(<App />);
+            initializeValidForm(wrapper);
+
+            expect(
+                wrapper
+                    .find('button[data-testid="submit-button"]')
+                    .prop('disabled')
+            ).toBe(false);
+
+            findInputById(wrapper, 'season').simulate('change', {
+                target: { name: 'season', value: '' },
+            });
+
+            setImmediate(() => {
+                wrapper.update();
+
+                expect(
+                    wrapper
+                        .find('button[data-testid="submit-button"]')
+                        .prop('disabled')
+                ).toBe(true);
+                done();
+            });
+        });
+
+        test('invalid photographer disables submit button', done => {
+            const wrapper = mount(<App />);
+            initializeValidForm(wrapper);
+
+            expect(
+                wrapper
+                    .find('button[data-testid="submit-button"]')
+                    .prop('disabled')
+            ).toBe(false);
+
+            findInputById(wrapper, 'photographer').simulate('change', {
+                target: { name: 'photographer', value: '' },
+            });
+
+            setImmediate(() => {
+                wrapper.update();
+
+                expect(
+                    wrapper
+                        .find('button[data-testid="submit-button"]')
+                        .prop('disabled')
+                ).toBe(true);
+                done();
+            });
+        });
+
+        test('invalid file disables submit button', done => {
+            const wrapper = mount(<App />);
+            initializeValidForm(wrapper);
+
+            expect(
+                wrapper
+                    .find('button[data-testid="submit-button"]')
+                    .prop('disabled')
+            ).toBe(false);
+
+            wrapper.find('input#uploader').simulate('change', {
+                target: {
+                    name: 'files',
+                    files: [
+                        new File(['test1'], 'test1.txt', {
+                            type: 'text/plain',
+                        }),
+                    ],
+                },
+            });
+
+            setImmediate(() => {
+                wrapper.update();
+
+                expect(
+                    wrapper
+                        .find('button[data-testid="submit-button"]')
+                        .prop('disabled')
+                ).toBe(true);
+                done();
+            });
+        });
     });
 });
 
 test('submits correctly', done => {
     const wrapper = mount(<App />);
-    const collectionInput = findCollectionInput(wrapper);
-    const photographerInput = findPhotographerInput(wrapper);
+    const collectionInput = findInputById(wrapper, 'collection');
+    const galleryNameInput = findInputById(wrapper, 'galleryName');
+    const seasonInput = findInputById(wrapper, 'season');
+    const photographerInput = findInputById(wrapper, 'photographer');
     const uploaderInput = wrapper.find('input#uploader');
     const uploadTestFile = new File(['test1'], 'test1.jpg', {
         type: 'image/jpeg',
     });
 
     collectionInput.simulate('change', {
-        target: { value: '  collection name         ' },
+        target: { name: 'collection', value: '  collection name         ' },
+    });
+    galleryNameInput.simulate('change', {
+        target: { name: 'galleryName', value: '     gallery name     ' },
+    });
+    seasonInput.simulate('change', {
+        target: { name: 'season', value: '     2018-2019        ' },
     });
     photographerInput.simulate('change', {
-        target: { value: ' photographer name ' },
+        target: { name: 'photographer', value: ' photographer name ' },
     });
     uploaderInput.simulate('change', {
         target: {
+            name: 'files',
             files: [uploadTestFile],
         },
     });
 
     axiosMock.onPost().replyOnce(200);
 
-    const submitButton = wrapper.find('button[data-testid="submit-button"]');
-    expect(submitButton.prop('disabled')).toBe(false);
-    submitButton.simulate('click');
+    wrapper
+        .find(MyInnerForm)
+        .find('form')
+        .simulate('submit', {
+            preventDefault: () => {},
+        });
 
     setImmediate(() => {
         expect(axiosMock.history.post.length).toBe(1);
@@ -244,6 +353,8 @@ test('submits correctly', done => {
             actualBody[key] = value;
         });
         expect(actualBody.collection).toBe('collection name');
+        expect(actualBody.galleryName).toBe('gallery name');
+        expect(actualBody.season).toBe('2018-2019');
         expect(actualBody.photographer).toBe('photographer name');
         expect(actualBody.images).toBe(uploadTestFile);
         done();

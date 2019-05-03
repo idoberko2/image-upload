@@ -4,116 +4,33 @@ import { CSSTransition } from 'react-transition-group';
 import styled from '@emotion/styled';
 import { Global } from '@emotion/core';
 
-// utils
-import validateFiles from '../utils/validateFiles';
-import sendFiles from '../utils/sendFiles';
-
 // components
 import globalCss from './common/globalCss';
-
 import Success from './pages/Success';
 import Form from './pages/Form';
 
-const uploadFormInitialState = {
-    collection: '',
-    collectionChanged: false,
-    files: null,
+const appInitialState = {
     formVisible: true,
-    isLoading: false,
-    photographer: '',
     successVisible: false,
-    submitError: null,
 };
 
 class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.filesRef = null;
-        this.state = uploadFormInitialState;
+        this.state = appInitialState;
 
-        this.handleCollectionChange = this.handleCollectionChange.bind(this);
-        this.handlePhotographerChange = this.handlePhotographerChange.bind(
+        this.handleSuccessfulSubmission = this.handleSuccessfulSubmission.bind(
             this
         );
-        this.handleFilesSelection = this.handleFilesSelection.bind(this);
-        this.isCollectionValid = this.isCollectionValid.bind(this);
-        this.isFilesValid = this.isFilesValid.bind(this);
-        this.isValid = this.isValid.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleCollectionChange(event) {
-        const collection = event.target.value;
-        this.setState(prevState => ({
-            collection,
-            collectionChanged:
-                prevState.collectionChanged || Boolean(collection),
-        }));
-    }
-
-    handlePhotographerChange(event) {
-        const photographer = event.target.value;
-        this.setState({ photographer });
-    }
-
-    handleFilesSelection(event) {
-        const { files } = event.target;
-
-        if (!files || files.length === 0) {
-            return;
-        }
-
-        this.setState({
-            files,
-        });
-    }
-
-    isCollectionValid() {
-        return !this.state.collectionChanged || this.state.collection !== '';
-    }
-
-    isFilesValid() {
-        return (
-            !window.FileReader ||
-            !window.Blob ||
-            (this.state.files && validateFiles(this.state.files))
-        );
-    }
-
-    isValid() {
-        return this.isCollectionValid() && this.isFilesValid();
-    }
-
-    handleSubmit() {
-        this.setState({ isLoading: true }, () => {
-            sendFiles(this.state)
-                .then(() => {
-                    this.filesRef.value = '';
-                    this.setState(
-                        Object.assign(
-                            {},
-                            uploadFormInitialState, // to reset the form
-                            { formVisible: false } // to hide the form and show success message
-                        )
-                    );
-                })
-                .catch(err =>
-                    this.setState({ submitError: err, isLoading: false })
-                );
-        });
+    handleSuccessfulSubmission(cb) {
+        this.setState({ formVisible: false }, cb);
     }
 
     render() {
-        const {
-            collection,
-            files,
-            formVisible,
-            isLoading,
-            photographer,
-            successVisible,
-            submitError,
-        } = this.state;
+        const { formVisible, successVisible } = this.state;
 
         return (
             <>
@@ -128,21 +45,9 @@ class App extends React.Component {
                     >
                         {() => (
                             <Form
-                                collection={collection}
-                                submitError={submitError}
-                                files={files}
-                                filesRef={c => (this.filesRef = c)}
-                                isCollectionValid={this.isCollectionValid()}
-                                isFilesValid={this.isFilesValid()}
-                                isSubmitDisabled={!this.isValid() || isLoading}
-                                isLoading={isLoading}
-                                onCollectionChange={this.handleCollectionChange}
-                                onPhotographerChange={
-                                    this.handlePhotographerChange
+                                handleSuccessfulSubmission={
+                                    this.handleSuccessfulSubmission
                                 }
-                                onFilesChange={this.handleFilesSelection}
-                                onSubmit={this.handleSubmit}
-                                photographer={photographer}
                             />
                         )}
                     </CSSTransition>
