@@ -2,12 +2,14 @@
 import React from 'react';
 import { CSSTransition } from 'react-transition-group';
 import styled from '@emotion/styled';
-import { Global } from '@emotion/core';
+import { Global, css } from '@emotion/core';
 
 // components
-import globalCss from './common/globalCss';
 import Success from './pages/Success';
 import Form from './pages/Form';
+
+// styles
+import globalCss, { mq } from './common/globalCss';
 
 const appInitialState = {
     formVisible: true,
@@ -35,7 +37,11 @@ class App extends React.Component {
         return (
             <>
                 <Global styles={globalCss} />
-                <Wrapper>
+                <Wrapper
+                    css={css`
+                        height: ${formVisible ? 'auto' : '100%'};
+                    `}
+                >
                     <CSSTransition
                         in={formVisible}
                         timeout={{ enter: 500, exit: 300 }}
@@ -76,7 +82,11 @@ class App extends React.Component {
 
 const Wrapper = styled.div`
     width: 100%;
-    height: 100%;
+    height: auto;
+
+    ${mq} {
+        height: 100%;
+    }
 
     display: flex;
     align-items: center;

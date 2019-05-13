@@ -3,9 +3,9 @@ import { css } from '@emotion/core';
 export const buttonCss = css`
     color: rgb(231, 231, 231);
     background-color: var(--main-color);
-    font-size: 0.8em;
-    padding: 0.5em 0;
-    border-radius: 0.5em;
+    font-size: 1em;
+    padding: 0.42em 0;
+    border-radius: 0.3em;
     border: 0;
     transition: all 200ms;
     cursor: pointer;

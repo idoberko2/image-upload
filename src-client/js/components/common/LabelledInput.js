@@ -11,6 +11,7 @@ const LabelledInput = ({ label, error, id, ...rest }) => {
             <Field
                 component={TextInput}
                 type="text"
+                error={error}
                 id={id}
                 css={css`
                     margin-top: 0;

@@ -1,26 +1,36 @@
+// external
 import React from 'react';
 import styled from '@emotion/styled';
+import { css } from '@emotion/core';
 
+// components
 import UploadStep from './UploadStep';
-import StatusRow from './StatusRow';
 import Spinner from '../common/Spinner';
-import ErrorMark from '../icons/ErrorMark';
-import smallIconCss from '../icons/smallIconCss';
+
+// styles
+import { mq } from '../common/globalCss';
 import getButtonCss from '../common/buttonCss';
 
-const getSubmissionStatus = submitError =>
-    !submitError ? null : (
-        <StatusRow>
-            <ErrorMark css={smallIconCss} />
-            <div>קרתה שגיאה במהלך העלאת הקבצים :(</div>
-        </StatusRow>
-    );
-
-const ThirdStep = ({ isDisabled, isLoading, onSubmit, submitError }) => (
+const ThirdStep = ({ isDisabled, isLoading }) => (
     <UploadStep
         step="3"
         action="מעלים"
-        status={getSubmissionStatus(submitError)}
+        css={css`
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 4;
+            grid-row-end: 5;
+
+            ${mq} {
+                grid-column-start: 2;
+                grid-column-end: 3;
+                grid-row-start: 2;
+                grid-row-end: 3;
+            }
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        `}
     >
         <SubmitWrapper>
             <button
@@ -37,6 +47,10 @@ const ThirdStep = ({ isDisabled, isLoading, onSubmit, submitError }) => (
 
 const SubmitWrapper = styled.div`
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 1rem;
 `;
 
 export default ThirdStep;

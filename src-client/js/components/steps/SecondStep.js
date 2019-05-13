@@ -1,15 +1,20 @@
+// external
 import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 
+// components
 import UploadStep from './UploadStep';
 import StatusRow from './StatusRow';
 import CheckMark from '../icons/CheckMark';
 import ErrorMark from '../icons/ErrorMark';
+
+// styles
+import { mq } from '../common/globalCss';
 import smallIconCss from '../icons/smallIconCss';
 import getButtonCss from '../common/buttonCss';
 
-const getFilesStatus = (files, filesError, isFilesTouched) => {
+const FilesStatus = ({ files, filesError, isFilesTouched }) => {
     if (!isFilesTouched) {
         return null;
     }
@@ -44,22 +49,38 @@ const SecondStep = ({
     <UploadStep
         step="2"
         action="בוחרים תמונות"
-        status={getFilesStatus(files, filesError, isFilesTouched)}
+        css={css`
+            grid-column-start: 1;
+            grid-row-start: 3;
+            ${mq} {
+                grid-column-start: 2;
+                grid-row-start: 1;
+            }
+        `}
     >
-        <UploaderWrapper htmlFor="uploader" css={getButtonCss(isDisabled)}>
-            בחירת תמונות
-            <input
-                type="file"
-                id="uploader"
-                name="files"
-                css={uploaderInputCss(isDisabled)}
-                multiple
-                onChange={handleChange}
-                ref={inputRef}
-                disabled={isDisabled}
-                accept="image/*"
-            />
-        </UploaderWrapper>
+        <InputsWrapper>
+            <UploaderWrapper htmlFor="uploader" css={getButtonCss(isDisabled)}>
+                בחירת תמונות
+                <input
+                    type="file"
+                    id="uploader"
+                    name="files"
+                    css={uploaderInputCss(isDisabled)}
+                    multiple
+                    onChange={handleChange}
+                    ref={inputRef}
+                    disabled={isDisabled}
+                    accept="image/*"
+                />
+            </UploaderWrapper>
+            <StatusContainer>
+                <FilesStatus
+                    files={files}
+                    filesError={filesError}
+                    isFilesTouched={isFilesTouched}
+                />
+            </StatusContainer>
+        </InputsWrapper>
     </UploadStep>
 );
 
@@ -85,6 +106,18 @@ const uploaderInputCss = disabled => css`
 
     /* style */
     cursor: ${disabled ? 'default' : 'pointer'};
+`;
+
+const InputsWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 1.1rem;
+`;
+
+const StatusContainer = styled.div`
+    height: 2em;
+    margin-top: 0.5em;
 `;
 
 export default SecondStep;

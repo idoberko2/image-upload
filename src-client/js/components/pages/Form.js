@@ -1,17 +1,24 @@
 // external
 import React from 'react';
 import { Formik } from 'formik';
-import getSeason from '../../utils/getSeason';
+import styled from '@emotion/styled';
+import { css } from '@emotion/core';
 
 // utils
 import sendFiles from '../../utils/sendFiles';
 import validateFiles from '../../utils/validateFiles';
+import getSeason from '../../utils/getSeason';
 
 // components
-import pageWrapperCss from '../common/pageWrapperCss';
 import FirstStep from '../steps/FirstStep';
 import SecondStep from '../steps/SecondStep';
 import ThirdStep from '../steps/ThirdStep';
+import StatusRow from '../steps/StatusRow';
+import ErrorMark from '../icons/ErrorMark';
+
+// styles
+import { mq } from '../common/globalCss';
+import smallIconCss from '../icons/smallIconCss';
 
 const formInitialValues = {
     collection: '',
@@ -63,7 +70,7 @@ export const MyInnerForm = ({
     status,
     touched,
 }) => (
-    <form css={pageWrapperCss} onSubmit={handleSubmit}>
+    <FormWrapper onSubmit={handleSubmit}>
         <FirstStep
             errors={errors}
             isDisabled={isSubmitting}
@@ -87,9 +94,9 @@ export const MyInnerForm = ({
         <ThirdStep
             isDisabled={!isValid || isSubmitting}
             isLoading={isSubmitting}
-            submitError={status && status.error}
         />
-    </form>
+        <SubmissionError error={status && status.error} />
+    </FormWrapper>
 );
 
 const handleSubmit = (
@@ -117,6 +124,41 @@ const Form = ({ handleSuccessfulSubmission }) => (
         initialValues={formInitialValues}
         validate={validate}
     />
+);
+
+const FormWrapper = styled.form`
+    margin: 0;
+    padding: 0;
+    width: 80%;
+    max-width: 40em;
+
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: auto;
+    grid-column-gap: 10%;
+    grid-row-gap: 2em;
+
+    ${mq} {
+        grid-template-columns: 45% 45%;
+    }
+`;
+
+export const SubmissionError = ({ error }) => (
+    <StatusRow
+        css={css`
+            grid-column-start: 1;
+            grid-row-start: 3;
+            grid-column-end: 3;
+            justify-content: center;
+        `}
+    >
+        {!error ? null : (
+            <>
+                <ErrorMark css={smallIconCss} />
+                <div>קרתה שגיאה במהלך העלאת הקבצים :(</div>
+            </>
+        )}
+    </StatusRow>
 );
 
 export default Form;

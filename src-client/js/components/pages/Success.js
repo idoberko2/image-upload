@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import pageWrapperCss from '../common/pageWrapperCss';
 import CheckMark from '../icons/CheckMark';
 import { buttonCss } from '../common/buttonCss';
+import { mq } from '../common/globalCss';
 
 const Success = ({ onReset }) => (
-    <div css={pageWrapperCss}>
+    <Wrapper>
         <div>
             <CheckMark />
         </div>
@@ -16,7 +16,7 @@ const Success = ({ onReset }) => (
                 להתחיל מחדש
             </button>
         </div>
-    </div>
+    </Wrapper>
 );
 
 const SuccessMessage = styled.div`
@@ -24,6 +24,16 @@ const SuccessMessage = styled.div`
     color: var(--main-color);
     margin-bottom: 1em;
     text-align: center;
+`;
+
+const Wrapper = styled.div`
+    margin: 0;
+    padding: 0;
+    width: 80%;
+
+    ${mq} {
+        width: 40%;
+    }
 `;
 
 export default Success;

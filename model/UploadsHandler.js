@@ -1,14 +1,4 @@
-const fs = require('fs');
-
-const fsUnlink = path =>
-    new Promise((resolve, reject) => {
-        fs.unlink(path, err => {
-            if (err) {
-                return reject(err);
-            }
-            return resolve();
-        });
-    });
+const fsPromises = require('fs').promises;
 
 class UploadsHandler {
     constructor(
@@ -25,7 +15,7 @@ class UploadsHandler {
         );
         this.registerUpload = registerUpload;
         this.removeTempFile =
-            removeTempFile === null ? fsUnlink : removeTempFile;
+            removeTempFile === null ? fsPromises.unlink : removeTempFile;
     }
 
     static isStoringExternally() {
