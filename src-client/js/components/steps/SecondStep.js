@@ -1,20 +1,25 @@
+// external
 import React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 
+// components
 import UploadStep from './UploadStep';
 import StatusRow from './StatusRow';
 import CheckMark from '../icons/CheckMark';
 import ErrorMark from '../icons/ErrorMark';
+
+// styles
+import { mq } from '../common/globalCss';
 import smallIconCss from '../icons/smallIconCss';
 import getButtonCss from '../common/buttonCss';
 
-const getFilesStatus = (files, isFilesValid) => {
-    if (!files) {
+const FilesStatus = ({ files, filesError, isFilesTouched }) => {
+    if (!isFilesTouched) {
         return null;
     }
 
-    if (isFilesValid) {
+    if (!filesError) {
         const text =
             files.length > 1 ? files.length + ' קבצים נבחרו' : 'קובץ אחד נבחר';
         return (
@@ -28,9 +33,7 @@ const getFilesStatus = (files, isFilesValid) => {
     return (
         <StatusRow>
             <ErrorMark css={smallIconCss} />
-            <div data-testid="uploader-status">
-                לפחות אחד מהקבצים אינו תמונה
-            </div>
+            <div data-testid="uploader-status">{filesError}</div>
         </StatusRow>
     );
 };
@@ -38,28 +41,46 @@ const getFilesStatus = (files, isFilesValid) => {
 const SecondStep = ({
     isDisabled,
     files,
-    isFilesValid,
+    filesError,
+    isFilesTouched,
     inputRef,
-    onChange,
+    handleChange,
 }) => (
     <UploadStep
         step="2"
         action="בוחרים תמונות"
-        status={getFilesStatus(files, isFilesValid)}
+        css={css`
+            grid-column-start: 1;
+            grid-row-start: 3;
+            ${mq} {
+                grid-column-start: 2;
+                grid-row-start: 1;
+            }
+        `}
     >
-        <UploaderWrapper htmlFor="uploader" css={getButtonCss(isDisabled)}>
-            בחירת תמונות
-            <input
-                type="file"
-                id="uploader"
-                css={uploaderInputCss(isDisabled)}
-                multiple
-                onChange={onChange}
-                ref={inputRef}
-                disabled={isDisabled}
-                accept="image/*"
-            />
-        </UploaderWrapper>
+        <InputsWrapper>
+            <UploaderWrapper htmlFor="uploader" css={getButtonCss(isDisabled)}>
+                בחירת תמונות
+                <input
+                    type="file"
+                    id="uploader"
+                    name="files"
+                    css={uploaderInputCss(isDisabled)}
+                    multiple
+                    onChange={handleChange}
+                    ref={inputRef}
+                    disabled={isDisabled}
+                    accept="image/*"
+                />
+            </UploaderWrapper>
+            <StatusContainer>
+                <FilesStatus
+                    files={files}
+                    filesError={filesError}
+                    isFilesTouched={isFilesTouched}
+                />
+            </StatusContainer>
+        </InputsWrapper>
     </UploadStep>
 );
 
@@ -85,6 +106,18 @@ const uploaderInputCss = disabled => css`
 
     /* style */
     cursor: ${disabled ? 'default' : 'pointer'};
+`;
+
+const InputsWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 1.1rem;
+`;
+
+const StatusContainer = styled.div`
+    height: 2em;
+    margin-top: 0.5em;
 `;
 
 export default SecondStep;

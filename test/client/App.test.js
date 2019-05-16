@@ -1,202 +1,119 @@
+// external
 import React from 'react';
-import { render, mount } from 'enzyme';
-import App from '../../src-client/js/components/App';
+import { mount } from 'enzyme';
 
-const findCollectionInput = wrapper =>
-    wrapper.findWhere(
-        n => n.name() === 'TextInput' && n.prop('id') === 'collection'
-    );
+// axios mock
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
+const axiosMock = new MockAdapter(axios);
+
+// components
+import App from '../../src-client/js/components/App';
+import {
+    MyInnerForm,
+    SubmissionError,
+} from '../../src-client/js/components/pages/Form';
+
+const findInputById = (wrapper, id) =>
+    wrapper.findWhere(n => n.name() === 'TextInput' && n.prop('id') === id);
 
 describe('App', () => {
-    test('matches snapshot', () => {
-        expect(render(<App />)).toMatchSnapshot();
-    });
-
-    test('does not allow to submit in initial state', () => {
+    test('submits correctly', done => {
         const wrapper = mount(<App />);
-        const submitButton = wrapper.find(
-            'button[data-testid="submit-button"]'
-        );
-
-        expect(submitButton.exists()).toBe(true);
-        expect(submitButton.prop('disabled')).toBe(true);
-    });
-
-    test('shows error indication when collection name is deleted', () => {
-        const wrapper = mount(<App />);
-        const collectionInput = findCollectionInput(wrapper);
-
-        expect(wrapper.find('[data-testid="collection-status"]')).toHaveLength(
-            0
-        );
+        const collectionInput = findInputById(wrapper, 'collection');
+        const galleryNameInput = findInputById(wrapper, 'galleryName');
+        const seasonInput = findInputById(wrapper, 'season');
+        const photographerInput = findInputById(wrapper, 'photographer');
+        const uploaderInput = wrapper.find('input#uploader');
+        const uploadTestFile = new File(['test1'], 'test1.jpg', {
+            type: 'image/jpeg',
+        });
 
         collectionInput.simulate('change', {
-            target: { value: 'collection name' },
+            target: { name: 'collection', value: '  collection name         ' },
         });
-        collectionInput.simulate('change', { target: { value: '' } });
-
-        expect(
-            wrapper.find('[data-testid="collection-status"]').text()
-        ).toEqual('שם האלבום לא יכול להיות ריק');
-    });
-
-    test('handles single file selection correctly', () => {
-        const wrapper = mount(<App />);
-        const uploaderInput = wrapper.find('input#uploader');
-
-        expect(wrapper.find('[data-testid="uploader-status"]')).toHaveLength(0);
-
+        galleryNameInput.simulate('change', {
+            target: { name: 'galleryName', value: '     gallery name     ' },
+        });
+        seasonInput.simulate('change', {
+            target: { name: 'season', value: '     2018-2019        ' },
+        });
+        photographerInput.simulate('change', {
+            target: { name: 'photographer', value: ' photographer name ' },
+        });
         uploaderInput.simulate('change', {
             target: {
-                files: [
-                    new File(['test1'], 'test1.jpg', { type: 'image/jpeg' }),
-                ],
+                name: 'files',
+                files: [uploadTestFile],
             },
         });
 
-        expect(wrapper.find('[data-testid="uploader-status"]').text()).toEqual(
-            'קובץ אחד נבחר'
-        );
-    });
+        axiosMock.onPost().replyOnce(200);
 
-    test('handles multipe file selection correctly', () => {
-        const wrapper = mount(<App />);
-        const uploaderInput = wrapper.find('input#uploader');
-
-        expect(wrapper.find('[data-testid="uploader-status"]')).toHaveLength(0);
-
-        uploaderInput.simulate('change', {
-            target: {
-                files: Array(100)
-                    .fill(0)
-                    .map(
-                        (_, i) =>
-                            new File([`test${i}`], `test${i}.jpg`, {
-                                type: 'image/jpeg',
-                            })
-                    ),
-            },
-        });
-
-        expect(wrapper.find('[data-testid="uploader-status"]').text()).toEqual(
-            '100 קבצים נבחרו'
-        );
-    });
-
-    test('handles file selection cancellation correctly', () => {
-        const wrapper = mount(<App />);
-        const uploaderInput = wrapper.find('input#uploader');
-
-        expect(wrapper.find('[data-testid="uploader-status"]')).toHaveLength(0);
-
-        uploaderInput.simulate('change', {
-            target: {
-                files: [
-                    new File(['test1'], 'test1.jpg', { type: 'image/jpeg' }),
-                ],
-            },
-        });
-
-        // this is what happens when opens the file selection dialog and chooses "cancel"
-        uploaderInput.simulate('change', { target: { files: [] } });
-
-        expect(wrapper.find('[data-testid="uploader-status"]').text()).toEqual(
-            'קובץ אחד נבחר'
-        );
-    });
-
-    test('handles file types correctly', () => {
-        const wrapper = mount(<App />);
-        const uploaderInput = wrapper.find('input#uploader');
-
-        expect(wrapper.find('[data-testid="uploader-status"]')).toHaveLength(0);
-
-        uploaderInput.simulate('change', {
-            target: {
-                files: [
-                    new File(['test1'], 'test1.jpg', { type: 'image/jpeg' }),
-                    new File(['test2'], 'test2.bmp', { type: 'image/bmp' }),
-                    new File(['test3'], 'test3.gif', { type: 'image/gif' }),
-                ],
-            },
-        });
-
-        expect(wrapper.find('[data-testid="uploader-status"]').text()).toEqual(
-            '3 קבצים נבחרו'
-        );
-
-        uploaderInput.simulate('change', {
-            target: {
-                files: [
-                    new File(['test4'], 'test4.txt', { type: 'text/plain' }),
-                ],
-            },
-        });
-
-        expect(wrapper.find('[data-testid="uploader-status"]').text()).toEqual(
-            'לפחות אחד מהקבצים אינו תמונה'
-        );
-    });
-
-    test('enables and disables the submission button correctly', () => {
-        const wrapper = mount(<App />);
-        const uploaderInput = wrapper.find('input#uploader');
-        const collectionInput = findCollectionInput(wrapper);
-
-        const initializeValidForm = () => {
-            collectionInput.simulate('change', {
-                target: { value: 'collection name' },
+        wrapper
+            .find(MyInnerForm)
+            .find('form')
+            .simulate('submit', {
+                preventDefault: () => {},
             });
 
-            uploaderInput.simulate('change', {
-                target: {
-                    files: [
-                        new File(['test1'], 'test1.jpg', {
-                            type: 'image/jpeg',
-                        }),
-                    ],
-                },
+        setImmediate(() => {
+            expect(axiosMock.history.post.length).toBe(1);
+
+            const actualBody = {};
+            axiosMock.history.post[0].data.forEach((value, key) => {
+                actualBody[key] = value;
             });
-        };
+            expect(actualBody).toMatchSnapshot();
+            expect(actualBody.images).toBe(uploadTestFile);
+            done();
+        });
+    });
 
-        // test valid form
-        initializeValidForm();
-        expect(
-            wrapper.find('button[data-testid="submit-button"]').prop('disabled')
-        ).toBe(false);
+    test('handles failure correctly', done => {
+        const wrapper = mount(<App />);
+        const collectionInput = findInputById(wrapper, 'collection');
+        const galleryNameInput = findInputById(wrapper, 'galleryName');
+        const seasonInput = findInputById(wrapper, 'season');
+        const photographerInput = findInputById(wrapper, 'photographer');
+        const uploaderInput = wrapper.find('input#uploader');
 
-        // change collection name to be invalid
         collectionInput.simulate('change', {
-            target: { value: '' },
+            target: { name: 'collection', value: 'c' },
         });
-        expect(
-            wrapper.find('button[data-testid="submit-button"]').prop('disabled')
-        ).toBe(true);
-
-        // retest valid form
-        initializeValidForm();
-        expect(
-            wrapper.find('button[data-testid="submit-button"]').prop('disabled')
-        ).toBe(false);
-
-        // change uploader files to be invalid
+        galleryNameInput.simulate('change', {
+            target: { name: 'galleryName', value: 'g' },
+        });
+        seasonInput.simulate('change', {
+            target: { name: 'season', value: '2018-2019' },
+        });
+        photographerInput.simulate('change', {
+            target: { name: 'photographer', value: 'photographer name' },
+        });
         uploaderInput.simulate('change', {
             target: {
+                name: 'files',
                 files: [
-                    new File(['test1'], 'test1.txt', {
-                        type: 'text/plain',
+                    new File(['test1'], 'test1.jpg', {
+                        type: 'image/jpeg',
                     }),
                 ],
             },
         });
-        expect(
-            wrapper.find('button[data-testid="submit-button"]').prop('disabled')
-        ).toBe(true);
 
-        // retest valid form
-        initializeValidForm();
-        expect(
-            wrapper.find('button[data-testid="submit-button"]').prop('disabled')
-        ).toBe(false);
+        axiosMock.onPost().replyOnce(500);
+
+        wrapper
+            .find(MyInnerForm)
+            .find('form')
+            .simulate('submit', {
+                preventDefault: () => {},
+            });
+
+        setImmediate(() => {
+            expect(wrapper.find(SubmissionError).text()).toMatchSnapshot();
+
+            done();
+        });
     });
 });

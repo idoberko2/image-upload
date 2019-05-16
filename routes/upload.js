@@ -2,50 +2,43 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const fs = require('fs');
 
 // Utils
 const processImage = require('../utils/processImage');
-const {
-    storageFunction,
-    localStoragePublicPath,
-} = require('../utils/storageService');
+const storeExternally = require('../utils/storeExternally');
+const storeLocally = require('../utils/storeLocally');
+const registerUpload = require('../utils/registerUpload');
+
+// Model
+const UploadsHandler = require('../model/UploadsHandler');
 
 // multer middleware
 const upload = multer({ dest: '/tmp/uploads' });
 
-// handlers
-const removeTempFile = path =>
-    new Promise((resolve, reject) => {
-        fs.unlink(path, err => {
-            if (err) {
-                return reject(err);
-            }
-            return resolve();
-        });
-    });
+router.post('/', upload.array('images'), async (req, res, next) => {
+    try {
+        const { body, files } = req;
+        const { collection, season, galleryName, photographer } = body;
 
-router.post('/', upload.array('images'), async (req, res) => {
-    const promises = req.files.map(async file => {
-        const { path, originalname } = file;
-        const { collection } = req.body;
-        const processedImage = processImage(path);
-        const storagePath = await storageFunction(
-            processedImage,
+        const handler = new UploadsHandler(
+            processImage,
+            storeExternally,
+            storeLocally,
+            registerUpload
+        );
+        const urls = await handler.upload(
+            `${req.protocol}://${req.get('host')}`,
             collection,
-            originalname,
-            `${req.protocol}://${req.get('host')}/${localStoragePublicPath}`
+            season,
+            galleryName,
+            photographer,
+            files
         );
 
-        await removeTempFile(path);
-
-        return storagePath;
-    });
-
-    const urls = await Promise.all(promises);
-    console.info({ urls });
-
-    return res.json({ urls });
+        return res.json({ urls });
+    } catch (error) {
+        next(error);
+    }
 });
 
 module.exports = router;

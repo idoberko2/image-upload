@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Form handles file selection cancellation correctly 1`] = `"קובץ אחד נבחר"`;
+
+exports[`Form handles file types correctly 1`] = `"3 קבצים נבחרו"`;
+
+exports[`Form handles file types correctly 2`] = `"לפחות אחד מהקבצים אינו תמונה"`;
+
+exports[`Form handles multipe file selection correctly 1`] = `"100 קבצים נבחרו"`;
+
+exports[`Form handles single file selection correctly 1`] = `"קובץ אחד נבחר"`;

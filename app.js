@@ -3,8 +3,8 @@ const express = require('express');
 const path = require('path');
 const logger = require('morgan');
 
-// utils
-const { localStoragePublicPath } = require('./utils/storageService');
+// model
+const UploadsHandler = require('./model/UploadsHandler');
 
 // routes
 const uploadRouter = require('./routes/upload');
@@ -28,11 +28,19 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-if (localStoragePublicPath) {
+if (!UploadsHandler.isStoringExternally()) {
     app.use(
-        `/${localStoragePublicPath}`,
+        `/${UploadsHandler.getLocalStoragePublicPath()}`,
         express.static(path.join(__dirname, 'uploads'))
     );
 }
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    if (res.headersSent) {
+        return next(err);
+    }
+    res.status(500).send('Error!');
+});
 
 module.exports = app;

@@ -2,113 +2,46 @@
 import React from 'react';
 import { CSSTransition } from 'react-transition-group';
 import styled from '@emotion/styled';
-import { Global } from '@emotion/core';
-
-// utils
-import validateFiles from '../utils/validateFiles';
-import sendFiles from '../utils/sendFiles';
+import { Global, css } from '@emotion/core';
 
 // components
-import globalCss from './common/globalCss';
-
 import Success from './pages/Success';
 import Form from './pages/Form';
 
-const uploadFormInitialState = {
-    files: null,
-    collection: '',
-    collectionChanged: false,
+// styles
+import globalCss, { mq } from './common/globalCss';
+
+const appInitialState = {
     formVisible: true,
     successVisible: false,
-    submitError: null,
-    isLoading: false,
 };
 
 class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.filesRef = null;
-        this.state = uploadFormInitialState;
+        this.state = appInitialState;
 
-        this.handleCollectionChange = this.handleCollectionChange.bind(this);
-        this.handleFilesSelection = this.handleFilesSelection.bind(this);
-        this.isCollectionValid = this.isCollectionValid.bind(this);
-        this.isFilesValid = this.isFilesValid.bind(this);
-        this.isValid = this.isValid.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleCollectionChange(event) {
-        const collection = event.target.value;
-        this.setState(prevState => ({
-            collection,
-            collectionChanged:
-                prevState.collectionChanged || Boolean(collection),
-        }));
-    }
-
-    handleFilesSelection(event) {
-        const { files } = event.target;
-
-        if (!files || files.length === 0) {
-            return;
-        }
-
-        this.setState({
-            files,
-        });
-    }
-
-    isCollectionValid() {
-        return !this.state.collectionChanged || this.state.collection !== '';
-    }
-
-    isFilesValid() {
-        return (
-            !window.FileReader ||
-            !window.Blob ||
-            (this.state.files && validateFiles(this.state.files))
+        this.handleSuccessfulSubmission = this.handleSuccessfulSubmission.bind(
+            this
         );
     }
 
-    isValid() {
-        return this.isCollectionValid() && this.isFilesValid();
-    }
-
-    handleSubmit() {
-        this.setState({ isLoading: true }, () => {
-            sendFiles(this.state)
-                .then(() => {
-                    this.filesRef.value = '';
-                    this.setState(
-                        Object.assign(
-                            {},
-                            uploadFormInitialState, // to reset the form
-                            { formVisible: false } // to hide the form and show success message
-                        )
-                    );
-                })
-                .catch(err =>
-                    this.setState({ submitError: err, isLoading: false })
-                );
-        });
+    handleSuccessfulSubmission(cb) {
+        this.setState({ formVisible: false }, cb);
     }
 
     render() {
-        const {
-            collection,
-            files,
-            formVisible,
-            successVisible,
-            submitError,
-            isLoading,
-        } = this.state;
+        const { formVisible, successVisible } = this.state;
 
         return (
             <>
                 <Global styles={globalCss} />
-                <Wrapper>
+                <Wrapper
+                    css={css`
+                        height: ${formVisible ? 'auto' : '100%'};
+                    `}
+                >
                     <CSSTransition
                         in={formVisible}
                         timeout={{ enter: 500, exit: 300 }}
@@ -118,17 +51,9 @@ class App extends React.Component {
                     >
                         {() => (
                             <Form
-                                collection={collection}
-                                submitError={submitError}
-                                files={files}
-                                filesRef={c => (this.filesRef = c)}
-                                isCollectionValid={this.isCollectionValid()}
-                                isFilesValid={this.isFilesValid()}
-                                isSubmitDisabled={!this.isValid() || isLoading}
-                                isLoading={isLoading}
-                                onCollectionChange={this.handleCollectionChange}
-                                onFilesChange={this.handleFilesSelection}
-                                onSubmit={this.handleSubmit}
+                                handleSuccessfulSubmission={
+                                    this.handleSuccessfulSubmission
+                                }
                             />
                         )}
                     </CSSTransition>
@@ -157,7 +82,11 @@ class App extends React.Component {
 
 const Wrapper = styled.div`
     width: 100%;
-    height: 100%;
+    height: auto;
+
+    ${mq} {
+        height: 100%;
+    }
 
     display: flex;
     align-items: center;

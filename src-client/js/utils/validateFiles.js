@@ -6,13 +6,7 @@ const allowedMimeTypes = {
 
 // input "accept" attribute allows additional MIME types (such as svg)
 function validateFiles(files) {
-    for (const file of files) {
-        if (!allowedMimeTypes[file.type]) {
-            return false;
-        }
-    }
-
-    return true;
+    return !files.some(file => !allowedMimeTypes[file.type]);
 }
 
 export default validateFiles;

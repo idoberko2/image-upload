@@ -1,4 +1,5 @@
 const fs = require('fs');
+const fsPromises = fs.promises;
 const fx = require('mkdir-recursive');
 const path = require('path');
 
@@ -27,25 +28,18 @@ function createBaseFolderIfNotExists(path) {
     return folderCreationPromises[path];
 }
 
-function storeLocally(imageStream, collection, fileName, prefix = '') {
-    return new Promise(async (resolve, reject) => {
-        const uploadsPath = path.join(__dirname, '..', uploadsFolder);
-        const collectionFolder = path.join(uploadsPath, collection);
-        const storageFileName = `${Math.random()}_${fileName}`;
+async function storeLocally(image, collection, fileName, { prefix = '' }) {
+    const uploadsPath = path.join(__dirname, '..', uploadsFolder);
+    const collectionFolder = path.join(uploadsPath, collection);
+    const storageFileName = `${Math.random()}_${fileName}`;
 
-        await createBaseFolderIfNotExists(collectionFolder);
+    await createBaseFolderIfNotExists(collectionFolder);
+    await fsPromises.writeFile(
+        path.join(collectionFolder, storageFileName),
+        image
+    );
 
-        const writeStream = fs.createWriteStream(
-            path.join(collectionFolder, storageFileName)
-        );
-
-        writeStream.on('finish', () =>
-            resolve(`${prefix}/${collection}/${storageFileName}`)
-        );
-        writeStream.on('error', err => reject(err));
-
-        imageStream.pipe(writeStream);
-    });
+    return `${prefix}/${collection}/${storageFileName}`;
 }
 
 module.exports = storeLocally;

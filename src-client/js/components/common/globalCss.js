@@ -1,5 +1,7 @@
 import { css } from '@emotion/core';
 
+export const mq = '@media (min-width: 768px)';
+
 const globalStyles = css`
     :root {
         --main-color: #4d4e4d;
@@ -7,13 +9,23 @@ const globalStyles = css`
         --secondary-color-light: #e04e4e;
         --error-color: #d80000;
         --success-color: #4c9a4c;
+        --app-width: 30em;
     }
 
     body {
-        font: 1em Arial;
+        font-family: 'Rubik', sans-serif;
+        font-size: 4vw;
+        ${mq} {
+            font-size: 2vw;
+        }
         background-image: linear-gradient(to bottom right, #a1a1a1, #cfcfcf);
         direction: rtl;
         color: var(--main-color);
+    }
+
+    input,
+    button {
+        font-family: inherit;
     }
 
     .fade-in-out-enter {
