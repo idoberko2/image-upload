@@ -1,5 +1,7 @@
 # image-upload
 
+[![Codecov Coverage](https://img.shields.io/codecov/c/github/idoberko2/image-upload/master.svg?style=flat-square)](https://codecov.io/gh/idoberko2/image-upload/)
+
 ## Running the app locally
 
 1. Clone this repository
