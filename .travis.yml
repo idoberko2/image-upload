@@ -1,3 +1,5 @@
 language: node_js
 node_js:
     - 'lts/*'
+env:
+    - CODECOV_TOKEN="22512698-0ee9-4435-a175-3ecb57ab0f6f"

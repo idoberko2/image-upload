@@ -6,7 +6,13 @@ function registerUpload(
     photographer,
     imageUrls
 ) {
-    return axios.post(process.env.DB_SERVICE, {
+    const { DB_SERVICE_URL } = process.env;
+
+    if (DB_SERVICE_URL == null) {
+        throw Error('DB_SERVICE_URL is required');
+    }
+
+    return axios.post(DB_SERVICE_URL, {
         folderName: collection,
         season,
         galleryName,

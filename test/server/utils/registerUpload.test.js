@@ -7,12 +7,7 @@ describe('registerUpload', () => {
     const dummyUrl = 'http://demourl.com';
     let prevEnv;
 
-    beforeAll(() => {
-        prevEnv = process.env;
-        process.env.DB_SERVICE = dummyUrl;
-    });
-
-    afterAll(() => {
+    afterEach(() => {
         process.env = prevEnv;
     });
 
@@ -23,6 +18,9 @@ describe('registerUpload', () => {
         const season = 'season';
         const photographer = 'photographer';
         const images = ['path1', 'path2', 'path3'];
+
+        prevEnv = { ...process.env };
+        process.env.DB_SERVICE_URL = dummyUrl;
 
         axiosMock.onPost().replyOnce(200);
 
@@ -58,5 +56,28 @@ describe('registerUpload', () => {
         );
 
         done();
+    });
+
+    test('throws an error if DB_SERVICE_URL is not set', () => {
+        // test setup
+        const galleryName = 'שם הגלריה';
+        const collection = 'collection';
+        const season = 'season';
+        const photographer = 'photographer';
+        const images = ['path1', 'path2', 'path3'];
+
+        prevEnv = { ...process.env };
+        const { DB_SERVICE_URL, ...newEnv } = process.env;
+        process.env = { ...newEnv };
+
+        expect(() =>
+            registerUpload(
+                collection,
+                galleryName,
+                season,
+                photographer,
+                images
+            )
+        ).toThrowError();
     });
 });
