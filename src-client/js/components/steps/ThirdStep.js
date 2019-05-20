@@ -21,7 +21,7 @@ const ThirdStep = ({ isDisabled, isLoading }) => (
             grid-row-start: 4;
             grid-row-end: 5;
 
-            ${mq} {
+            ${mq[0]} {
                 grid-column-start: 2;
                 grid-column-end: 3;
                 grid-row-start: 2;

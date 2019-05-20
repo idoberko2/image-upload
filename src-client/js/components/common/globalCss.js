@@ -1,6 +1,6 @@
 import { css } from '@emotion/core';
 
-export const mq = '@media (min-width: 768px)';
+export const mq = ['@media (min-width: 768px)', '@media (min-width: 1200px)'];
 
 const globalStyles = css`
     :root {
@@ -9,14 +9,16 @@ const globalStyles = css`
         --secondary-color-light: #e04e4e;
         --error-color: #d80000;
         --success-color: #4c9a4c;
-        --app-width: 30em;
     }
 
     body {
         font-family: 'Rubik', sans-serif;
         font-size: 4vw;
-        ${mq} {
+        ${mq[0]} {
             font-size: 2vw;
+        }
+        ${mq[1]} {
+            font-size: 24px;
         }
         background-image: linear-gradient(to bottom right, #a1a1a1, #cfcfcf);
         direction: rtl;

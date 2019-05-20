@@ -82,9 +82,11 @@ class App extends React.Component {
 
 const Wrapper = styled.div`
     width: 100%;
+    max-width: 1000px;
     height: auto;
+    margin: 0 auto;
 
-    ${mq} {
+    ${mq[0]} {
         height: 100%;
     }
 
