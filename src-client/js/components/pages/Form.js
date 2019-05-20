@@ -138,7 +138,7 @@ const FormWrapper = styled.form`
     grid-column-gap: 10%;
     grid-row-gap: 2em;
 
-    ${mq} {
+    ${mq[0]} {
         grid-template-columns: 45% 45%;
     }
 `;

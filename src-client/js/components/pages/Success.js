@@ -31,7 +31,7 @@ const Wrapper = styled.div`
     padding: 0;
     width: 80%;
 
-    ${mq} {
+    ${mq[0]} {
         width: 40%;
     }
 `;

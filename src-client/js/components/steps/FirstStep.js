@@ -19,7 +19,7 @@ const FirstStep = ({ isDisabled, handleChange, values, touched, errors }) => {
                 grid-column-start: 1;
                 grid-row-start: 1;
                 grid-row-end: 2;
-                ${mq} {
+                ${mq[0]} {
                     grid-row-end: 3;
                 }
                 display: flex;

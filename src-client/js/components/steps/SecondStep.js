@@ -52,7 +52,7 @@ const SecondStep = ({
         css={css`
             grid-column-start: 1;
             grid-row-start: 3;
-            ${mq} {
+            ${mq[0]} {
                 grid-column-start: 2;
                 grid-row-start: 1;
             }
@@ -112,7 +112,7 @@ const InputsWrapper = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding-top: 1.1rem;
+    padding-top: 1.2em;
 `;
 
 const StatusContainer = styled.div`
