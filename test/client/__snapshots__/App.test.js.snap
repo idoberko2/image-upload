@@ -2,6 +2,8 @@
 
 exports[`App handles failure correctly 1`] = `"קרתה שגיאה במהלך העלאת הקבצים :("`;
 
+exports[`App resets the form correctly 1`] = `"הקבצים נשלחו בהצלחה"`;
+
 exports[`App submits correctly 1`] = `
 Object {
   "collection": "collection name",

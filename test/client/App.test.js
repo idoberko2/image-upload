@@ -14,53 +14,58 @@ import {
     MyInnerForm,
     SubmissionError,
 } from '../../src-client/js/components/pages/Form';
+import Success, {
+    SuccessMessage,
+} from '../../src-client/js/components/pages/Success';
+
+// utils
+import getSeason from '../../src-client/js/utils/getSeason';
 
 const findInputById = (wrapper, id) =>
     wrapper.findWhere(n => n.name() === 'TextInput' && n.prop('id') === id);
 
+const submitForm = async (wrapper, uploadTestFile) => {
+    jest.useFakeTimers();
+
+    findInputById(wrapper, 'collection').simulate('change', {
+        target: { name: 'collection', value: '  collection name         ' },
+    });
+    findInputById(wrapper, 'galleryName').simulate('change', {
+        target: { name: 'galleryName', value: '     gallery name     ' },
+    });
+    findInputById(wrapper, 'season').simulate('change', {
+        target: { name: 'season', value: '     2018-2019        ' },
+    });
+    findInputById(wrapper, 'photographer').simulate('change', {
+        target: { name: 'photographer', value: ' photographer name ' },
+    });
+    wrapper.find('input#uploader').simulate('change', {
+        target: {
+            name: 'files',
+            files: [uploadTestFile],
+        },
+    });
+
+    await act(async () => {
+        await wrapper
+            .find(MyInnerForm)
+            .find('form')
+            .simulate('submit', {
+                preventDefault: () => {},
+            });
+    });
+    jest.runAllTimers();
+};
+
 describe('App', () => {
     test('submits correctly', async done => {
-        jest.useFakeTimers();
         const wrapper = mount(<App />);
-        const collectionInput = findInputById(wrapper, 'collection');
-        const galleryNameInput = findInputById(wrapper, 'galleryName');
-        const seasonInput = findInputById(wrapper, 'season');
-        const photographerInput = findInputById(wrapper, 'photographer');
-        const uploaderInput = wrapper.find('input#uploader');
+
         const uploadTestFile = new File(['test1'], 'test1.jpg', {
             type: 'image/jpeg',
         });
-
-        collectionInput.simulate('change', {
-            target: { name: 'collection', value: '  collection name         ' },
-        });
-        galleryNameInput.simulate('change', {
-            target: { name: 'galleryName', value: '     gallery name     ' },
-        });
-        seasonInput.simulate('change', {
-            target: { name: 'season', value: '     2018-2019        ' },
-        });
-        photographerInput.simulate('change', {
-            target: { name: 'photographer', value: ' photographer name ' },
-        });
-        uploaderInput.simulate('change', {
-            target: {
-                name: 'files',
-                files: [uploadTestFile],
-            },
-        });
-
         axiosMock.onPost().replyOnce(200);
-
-        await act(async () => {
-            await wrapper
-                .find(MyInnerForm)
-                .find('form')
-                .simulate('submit', {
-                    preventDefault: () => {},
-                });
-        });
-        jest.runAllTimers();
+        await submitForm(wrapper, uploadTestFile);
 
         setImmediate(() => {
             expect(axiosMock.history.post.length).toBe(1);
@@ -75,38 +80,59 @@ describe('App', () => {
         });
     });
 
-    test('handles failure correctly', done => {
+    test('resets the form correctly', async done => {
         const wrapper = mount(<App />);
-        const collectionInput = findInputById(wrapper, 'collection');
-        const galleryNameInput = findInputById(wrapper, 'galleryName');
-        const seasonInput = findInputById(wrapper, 'season');
-        const photographerInput = findInputById(wrapper, 'photographer');
-        const uploaderInput = wrapper.find('input#uploader');
 
-        collectionInput.simulate('change', {
-            target: { name: 'collection', value: 'c' },
+        const uploadTestFile = new File(['test1'], 'test1.jpg', {
+            type: 'image/jpeg',
         });
-        galleryNameInput.simulate('change', {
-            target: { name: 'galleryName', value: 'g' },
-        });
-        seasonInput.simulate('change', {
-            target: { name: 'season', value: '2018-2019' },
-        });
-        photographerInput.simulate('change', {
-            target: { name: 'photographer', value: 'photographer name' },
-        });
-        uploaderInput.simulate('change', {
-            target: {
-                name: 'files',
-                files: [
-                    new File(['test1'], 'test1.jpg', {
-                        type: 'image/jpeg',
-                    }),
-                ],
-            },
-        });
+        axiosMock.onPost().replyOnce(200);
+        await submitForm(wrapper, uploadTestFile);
 
+        setImmediate(async () => {
+            wrapper.update();
+            expect(wrapper.find(SuccessMessage).text()).toMatchSnapshot();
+            await act(async () => {
+                await wrapper
+                    .find(Success)
+                    .find('[data-testid="button-reset"]')
+                    .first()
+                    .simulate('click');
+            });
+            jest.runAllTimers();
+
+            setImmediate(() => {
+                wrapper.update();
+
+                expect(findInputById(wrapper, 'collection').props().value).toBe(
+                    ''
+                );
+                expect(
+                    findInputById(wrapper, 'galleryName').props().value
+                ).toBe('');
+                expect(findInputById(wrapper, 'season').props().value).toBe(
+                    getSeason()
+                );
+                expect(
+                    findInputById(wrapper, 'photographer').props().value
+                ).toBe('');
+                expect(
+                    wrapper.find('input#uploader').props().value
+                ).toBeUndefined();
+            });
+
+            done();
+        });
+    });
+
+    test('handles failure correctly', async done => {
+        const wrapper = mount(<App />);
+
+        const uploadTestFile = new File(['test1'], 'test1.jpg', {
+            type: 'image/jpeg',
+        });
         axiosMock.onPost().replyOnce(500);
+        await submitForm(wrapper, uploadTestFile);
 
         wrapper
             .find(MyInnerForm)

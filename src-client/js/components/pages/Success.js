@@ -12,14 +12,18 @@ const Success = ({ onReset }) => (
         </div>
         <SuccessMessage>הקבצים נשלחו בהצלחה</SuccessMessage>
         <div>
-            <button css={buttonCss} onClick={onReset}>
+            <button
+                css={buttonCss}
+                onClick={onReset}
+                data-testid="button-reset"
+            >
                 להתחיל מחדש
             </button>
         </div>
     </Wrapper>
 );
 
-const SuccessMessage = styled.div`
+export const SuccessMessage = styled.div`
     font-size: 2em;
     color: var(--main-color);
     margin-bottom: 1em;
