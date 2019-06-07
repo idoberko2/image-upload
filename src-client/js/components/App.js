@@ -1,5 +1,5 @@
 // external
-import React from 'react';
+import React, { useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import styled from '@emotion/styled';
 import { Global, css } from '@emotion/core';
@@ -11,74 +11,52 @@ import Form from './pages/Form';
 // styles
 import globalCss, { mq } from './common/globalCss';
 
-const appInitialState = {
-    formVisible: true,
-    successVisible: false,
-};
+const App = () => {
+    const [page, setPage] = useState('form');
+    const [inTransition, setInTransition] = useState(false);
 
-class App extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = appInitialState;
-
-        this.handleSuccessfulSubmission = this.handleSuccessfulSubmission.bind(
-            this
-        );
-    }
-
-    handleSuccessfulSubmission(cb) {
-        this.setState({ formVisible: false }, cb);
-    }
-
-    render() {
-        const { formVisible, successVisible } = this.state;
-
-        return (
-            <>
-                <Global styles={globalCss} />
-                <Wrapper
-                    css={css`
-                        height: ${formVisible ? 'auto' : '100%'};
-                    `}
+    return (
+        <>
+            <Global styles={globalCss} />
+            <Wrapper
+                css={css`
+                    height: ${page === 'form' ? 'auto' : '100%'};
+                `}
+            >
+                <CSSTransition
+                    in={page === 'form' && !inTransition}
+                    timeout={{ enter: 500, exit: 300 }}
+                    classNames="fade-in-out"
+                    unmountOnExit
+                    onExited={() => {
+                        setPage('success');
+                        setInTransition(false);
+                    }}
                 >
-                    <CSSTransition
-                        in={formVisible}
-                        timeout={{ enter: 500, exit: 300 }}
-                        classNames="fade-in-out"
-                        unmountOnExit
-                        onExited={() => this.setState({ successVisible: true })}
-                    >
-                        {() => (
-                            <Form
-                                handleSuccessfulSubmission={
-                                    this.handleSuccessfulSubmission
-                                }
-                            />
-                        )}
-                    </CSSTransition>
-                    <CSSTransition
-                        in={successVisible}
-                        timeout={{ enter: 500, exit: 300 }}
-                        classNames="fade-in-out"
-                        unmountOnExit
-                        onExited={() => this.setState({ formVisible: true })}
-                    >
-                        {() => (
-                            <Success
-                                onReset={() =>
-                                    this.setState({
-                                        successVisible: false,
-                                    })
-                                }
-                            />
-                        )}
-                    </CSSTransition>
-                </Wrapper>
-            </>
-        );
-    }
-}
+                    {() => (
+                        <Form
+                            handleSuccessfulSubmission={() =>
+                                setInTransition(true)
+                            }
+                        />
+                    )}
+                </CSSTransition>
+                <CSSTransition
+                    in={page === 'success' && !inTransition}
+                    timeout={{ enter: 500, exit: 300 }}
+                    classNames="fade-in-out"
+                    unmountOnExit
+                    onExited={() => {
+                        setPage('form');
+                        setInTransition(false);
+                    }}
+                >
+                    {() => <Success onReset={() => setInTransition(true)} />}
+                </CSSTransition>
+            </Wrapper>
+        </>
+    );
+};
 
 const Wrapper = styled.div`
     width: 100%;

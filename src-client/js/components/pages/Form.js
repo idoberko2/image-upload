@@ -102,21 +102,14 @@ export const MyInnerForm = ({
 const handleSubmit = (
     handleSuccessfulSubmission,
     values,
-    { resetForm, setSubmitting, setStatus }
+    { setSubmitting, setStatus }
 ) =>
     sendFiles(values)
-        .then(() => {
-            handleSuccessfulSubmission(() => {
-                filesRef.value = '';
-                resetForm(formInitialValues);
-                setSubmitting(false);
-            });
-        })
+        .then(handleSuccessfulSubmission)
         .catch(err => {
             setStatus({ error: err });
             setSubmitting(false);
         });
-
 const Form = ({ handleSuccessfulSubmission }) => (
     <Formik
         component={MyInnerForm}

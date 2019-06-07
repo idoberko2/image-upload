@@ -1,5 +1,6 @@
 // external
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 import { mount } from 'enzyme';
 
 // axios mock
@@ -18,7 +19,8 @@ const findInputById = (wrapper, id) =>
     wrapper.findWhere(n => n.name() === 'TextInput' && n.prop('id') === id);
 
 describe('App', () => {
-    test('submits correctly', done => {
+    test('submits correctly', async done => {
+        jest.useFakeTimers();
         const wrapper = mount(<App />);
         const collectionInput = findInputById(wrapper, 'collection');
         const galleryNameInput = findInputById(wrapper, 'galleryName');
@@ -50,12 +52,15 @@ describe('App', () => {
 
         axiosMock.onPost().replyOnce(200);
 
-        wrapper
-            .find(MyInnerForm)
-            .find('form')
-            .simulate('submit', {
-                preventDefault: () => {},
-            });
+        await act(async () => {
+            await wrapper
+                .find(MyInnerForm)
+                .find('form')
+                .simulate('submit', {
+                    preventDefault: () => {},
+                });
+        });
+        jest.runAllTimers();
 
         setImmediate(() => {
             expect(axiosMock.history.post.length).toBe(1);
