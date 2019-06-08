@@ -18,9 +18,9 @@ function generateStorageFunction(
         image,
         collection,
         fileName,
-        { mimetype }
+        { mimetype, season }
     ) {
-        const path = `${collection}/${fileName}`;
+        const path = `${season}/${collection}/${fileName}`;
         /* istanbul ignore next */
         const uploadFunction =
             customUploader ||

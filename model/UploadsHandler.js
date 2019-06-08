@@ -78,6 +78,7 @@ class UploadsHandler {
                 {
                     prefix: `${baseUrl}/${this.constructor.getLocalStoragePublicPath()}`,
                     mimetype,
+                    season,
                 }
             );
 
