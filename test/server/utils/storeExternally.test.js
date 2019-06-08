@@ -15,9 +15,12 @@ describe('storeExternally', () => {
             image,
             'collection',
             'filename.png',
-            { mimetype: 'image/png' }
+            { mimetype: 'image/png', season: '2018-2019' }
         );
-        expect(uploaderFn).toBeCalledWith('collection/filename.png', image);
-        expect(result).toBe('S3_PUBLIC_PATH/collection/filename.png');
+        expect(uploaderFn).toBeCalledWith(
+            '2018-2019/collection/filename.png',
+            image
+        );
+        expect(result).toBe('S3_PUBLIC_PATH/2018-2019/collection/filename.png');
     });
 });
