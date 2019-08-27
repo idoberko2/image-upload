@@ -87,7 +87,12 @@ class UploadsHandler {
             return storagePath;
         });
 
+        console.info(`Uploading ${promises.length} files...`);
+
         const urls = await Promise.all(promises);
+
+        console.info(`Successfully uploaded ${promises.length} files.`);
+        console.info('Registering the upload in the external service...');
 
         await this.registerUpload(
             collection,
@@ -97,6 +102,9 @@ class UploadsHandler {
             urls
         );
 
+        console.info(
+            'Successfully registered the upload in the external service.'
+        );
         console.info({ urls });
 
         return urls;
