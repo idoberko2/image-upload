@@ -14,15 +14,16 @@ Run `yarn test`
 
 ## Environment variables
 
-| Name              | Type   | Default Value |
-| ----------------- | ------ | ------------- |
-| RESIZE_PIXELS     | Number | 900           |
-| UPLOADS_FOLDER    | String | 'uploads'     |
-| S3_ACCESS_KEY     | String | null          |
-| S3_ACCESS_SECRET  | String | null          |
-| S3_UPLOADS_BUCKET | String | null          |
-| S3_PUBLIC_PATH    | String | null          |
-| DB_SERVICE_URL    | String | null          |
+| Name                      | Type   | Default Value |
+| ------------------------- | ------ | ------------- |
+| RESIZE_PIXELS             | Number | 900           |
+| MAX_CONCURRENT_UPLOADS    | Number | 30            |
+| UPLOADS_FOLDER            | String | 'uploads'     |
+| S3_ACCESS_KEY             | String | null          |
+| S3_ACCESS_SECRET          | String | null          |
+| S3_UPLOADS_BUCKET         | String | null          |
+| S3_PUBLIC_PATH            | String | null          |
+| DB_SERVICE_URL            | String | null          |
 
 ### Storage
 

@@ -1,5 +1,19 @@
 const fsPromises = require('fs').promises;
 
+async function* uploadsGenerator(maxConcurrent, promises) {
+    let offset = 0;
+
+    while (offset < promises.length) {
+        if (offset + maxConcurrent < promises.length) {
+            yield promises.slice(offset, offset + maxConcurrent);
+        } else {
+            yield promises.slice(offset, promises.length);
+        }
+
+        offset += maxConcurrent
+    }
+}
+
 class UploadsHandler {
     constructor(
         processImage,
@@ -16,6 +30,7 @@ class UploadsHandler {
         this.registerUpload = registerUpload;
         this.removeTempFile =
             removeTempFile === null ? fsPromises.unlink : removeTempFile;
+        this.maxConcurrent = process.env.MAX_CONCURRENT_UPLOADS || 30;
     }
 
     static isStoringExternally() {
@@ -89,7 +104,15 @@ class UploadsHandler {
 
         console.info(`Uploading ${promises.length} files...`);
 
-        const urls = await Promise.all(promises);
+        let urls = [];
+
+        for await (const part of uploadsGenerator(this.maxConcurrent, promises)) {
+            urls = [
+                ...urls,
+                ... await Promise.all(part)
+            ]
+            console.info(`Uploaded ${urls.length} files. Moving forward...`)
+        }
 
         console.info(`Successfully uploaded ${promises.length} files.`);
         console.info('Registering the upload in the external service...');
