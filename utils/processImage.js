@@ -1,8 +1,6 @@
-const fs = require('fs');
 const sizeOf = require('image-size');
 const sharp = require('sharp');
 
-const logo = fs.readFileSync(`${__dirname}/../assets/watermark.png`);
 const resizeTo = process.env.RESIZE_PIXELS || 900;
 
 function processImage(image) {
@@ -12,9 +10,10 @@ function processImage(image) {
     const resizeHeightTo = isLandscape ? null : resizeTo;
 
     return sharp(image)
-        .overlayWith(logo, {
+        .composite([{
+            input: `${__dirname}/../assets/watermark.png`,
             gravity: sharp.gravity.northwest,
-        })
+        }])
         .resize(resizeWidthTo, resizeHeightTo)
         .toBuffer();
 }
