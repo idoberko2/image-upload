@@ -112,6 +112,7 @@ describe('UploadsHandler', () => {
         process.env = {
             ...process.env,
             ...defaultS3Env,
+            MAX_CONCURRENT_UPLOADS: 1,
         };
         const removeTempFile = jest.fn();
         const dummyBaseUrl = 'http://test.katamon.com';
