@@ -9,7 +9,7 @@ jest.mock('image-size', () => () => mockImageDimensions);
 
 const mockSharpHandlers = {};
 
-mockSharpHandlers.overlayWith = jest.fn(() => mockSharpHandlers);
+mockSharpHandlers.composite = jest.fn(() => mockSharpHandlers);
 mockSharpHandlers.resize = jest.fn(() => mockSharpHandlers);
 mockSharpHandlers.toBuffer = jest.fn(() => mockSharpHandlers);
 
@@ -24,7 +24,7 @@ jest.mock('sharp', () => mockSharp);
 describe('processImage', () => {
     test('should add logo watermark', () => {
         processImage('test');
-        expect(mockSharpHandlers.overlayWith).toHaveBeenCalled();
+        expect(mockSharpHandlers.composite).toHaveBeenCalled();
     });
 
     test('should resize landscape correctly', () => {
