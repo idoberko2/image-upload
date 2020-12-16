@@ -22,9 +22,24 @@ mockSharp.gravity = { northwest: 'northwest' };
 jest.mock('sharp', () => mockSharp);
 
 describe('processImage', () => {
-    test('should add logo watermark', () => {
+    test('should not add logo watermark by default', () => {
         processImage('test');
+        expect(mockSharpHandlers.composite).not.toHaveBeenCalled();
+    });
+
+    test('should add logo watermark if configured', () => {
+        // configure env
+        const originalEnv = process.env;
+        process.env.SHOULD_ADD_WATERMARK = 'true'
+
+        // SUT
+        processImage('test');
+
+        // assert
         expect(mockSharpHandlers.composite).toHaveBeenCalled();
+
+        // restore original env
+        process.env = originalEnv;
     });
 
     test('should resize landscape correctly', () => {
