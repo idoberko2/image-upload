@@ -53,10 +53,7 @@ module.exports = (env, argv) => {
 
         config.optimization = {
             minimizer: [
-                new TerserPlugin({
-                    cache: true,
-                    parallel: true,
-                }),
+                new TerserPlugin(),
             ],
             splitChunks: {
                 chunks: 'all',
