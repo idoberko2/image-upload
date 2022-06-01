@@ -40,7 +40,7 @@
         "react": "^16.9.0",
         "react-dom": "^16.9.0",
         "react-transition-group": "^2.5.3",
-        "sharp": "0.23.4",
+        "sharp": "0.30.5",
         "webpack": "^5.10.3"
     },
     "devDependencies": {
