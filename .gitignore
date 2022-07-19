@@ -65,3 +65,6 @@ uploads
 
 # dist files
 public
+
+# mac os system files
+.DS_Store
